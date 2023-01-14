@@ -9,15 +9,14 @@ Flag = -Werror -Wextra -Wall -g
 LIBFT_BINARY = libft.a 
 
 READLINE = 	-lreadline\
-			-L /usr/local/Cellar/readline/8.2.1/lib\
-			-I usr/local/Cellar/readline/8.2.1/include
+			-L /Users/$(USER)/goinfre/lib\
+			-I /Users/$(USER)/goinfre/include
 
-			
-			# -L /Users/$(USER)/goinfre/lib\
-			# -I /Users/$(USER)/goinfre/include
+			# -L /usr/local/Cellar/readline/8.2.1/lib\
+			# -I usr/local/Cellar/readline/8.2.1/include
 
 SRC = main.c constructor.c help_func.c parse.c n_term.c signal.c\
-	env_tools.c
+	env_tools.c quotes.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -27,15 +26,15 @@ $(NAME): $(OBJ)
 	${GCC} ${Flag} ${LIBFT_BINARY} ${READLINE} -o $(NAME) $(OBJ)
 	@echo "#####DONE#####"
 
-# install:
-# 	@	echo "Installing dependencies.."
-# 	@	cd /Users/$(USER)/goinfre
-# 	@	curl -L http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz --output readline.tar.gz
-# 	@	tar xf readline.tar.gz	
-# 	@	cd readline-master 
-# 	@	./configure --prefix=/Users/${USER}/goinfre
-# 	@	make
-# 	@make install
+install:
+	@echo "Installing dependencies.."
+	@cd /Users/zbidouli/goinfre
+	@curl -L http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz --output readline.tar.gz
+	@tar xf readline.tar.gz	
+	@cd readline-master 
+	@./configure --prefix=/Users/${USER}/goinfre
+	@make
+	@make install
 
 clean:
 	rm -rf $(OBJ)
@@ -45,4 +44,4 @@ fclean:
 
 re: fclean all
 
-phony: all
+phony: all clean fclean re

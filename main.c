@@ -52,7 +52,7 @@ int init_token(char **ps, char *end_s, char **q, char **eq)
     while (s < end_s && ft_strchr(SPACE, *s))
         s++;
     *ps = s;
-    printf("  TOKEN >>>>>> [%c]\n", (char)ret);
+    // printf("  TOKEN >>>>>> [%c]\n", (char)ret);
     return ret;
 }
 
@@ -192,20 +192,21 @@ int main(int ac, char **av, char **env)
     {
         // readline history
         add_history(buf);
-        if (buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' ')
-        {
-            // Chdir must be called by the parent, not the child.
-            buf[strlen(buf)] = 0; // chop \n
-            if (chdir((buf + 3)) < 0)
-                printf("cannot cd %s\n", (buf + 3));
-            printf("%s\n", getcwd(s, 100));
-            continue;
-        }
+        // if (buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' ')
+        // {
+        //     // Chdir must be called by the parent, not the child.
+        //     buf[strlen(buf)] = 0; // chop \n
+        //     if (chdir((buf + 3)) < 0)
+        //         printf("cannot cd %s\n", (buf + 3));
+        //     printf("%s\n", getcwd(s, 100));
+        //     continue;
+        // }
         if (fork_protected() == 0)
             cmd = parsecmd(buf);
         else
             wait(NULL);
         print_cmd(cmd);
     }
+    kill(0, SIGTERM);
     exit(1);
 }
