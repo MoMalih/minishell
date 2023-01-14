@@ -56,7 +56,7 @@ typedef struct s_redir_c
     t_cmd   *cmd;
     char    *file;
     char    *efile;
-    t_bool    expend;
+    t_bool  expend;
     int     flag;
     int     fd;
 }   t_redir_c;

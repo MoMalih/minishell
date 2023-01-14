@@ -119,7 +119,8 @@ void print_cmd(t_cmd *cmd)
         printf("<<<< >>>EXEC \n");
         while (ecmd->args[i++])
         {
-            printf(" EXEC ARGs [%s] \n", ecmd->args[i]);
+            printf(" EXEC ARGs [%s]   ______ ", ecmd->args[i]);
+            printf(" EXPEND [%d] \n", ecmd->expend[i]);
             // printf("exec EXEC [%s] \n", ecmd->end_args[i]);
         }
         // fflush(0);
@@ -129,7 +130,8 @@ void print_cmd(t_cmd *cmd)
         rcmd = (t_redir_c *)cmd;
         printf("<<<<<< R >>>>>>>>\n");
         printf("CMD >>>>>>>> [%d]\n", rcmd->cmd->id);
-        printf("FILE >>>>>>>> [%s]\n", rcmd->file);
+        printf("FILE >>>>>>>> [%s] ________ ", rcmd->file);
+        printf(" EXPEND [%d] \n", rcmd->expend);
         printf("FD >>>>>>>> [%d]\n", rcmd->fd);
         printf("Flag >>>>>>>> [%d]\n", rcmd->flag);
 

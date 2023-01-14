@@ -87,6 +87,7 @@ t_cmd   *parseexec(char **ptr, char *end_ptr)
 		else if(tok != 'a')
 			terminated("syntax");
 		e_cmd->args[ac] = cmd;
+		e_cmd->expend[ac] = false;
 		e_cmd->end_args[ac] = end_cmd;
 		ac++;
 		if(ac >= MAX_ARG)
@@ -155,6 +156,7 @@ t_cmd   *parsecmd(char *buf)
         printf("l_ovrs: [%s]\n", buf);
         terminated("syntax\n");
     }
+	quotes_handler(cmd);
     n_term(cmd);
 	// printf("###	## CMD %d>> \n", cmd->id);
     return cmd; 

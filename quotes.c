@@ -66,6 +66,27 @@ void update(char *str, char *end_str)
     end_str[i] = '\0';
 }
 
+t_bool    to_expand(char *str ,char quote)
+{
+    int it;
+
+    it = 0;
+    while(str[it] && it < ft_strlen(str))
+    {
+        if(quote == 's')
+        {
+            
+
+        }
+        else if (quote == 'd')
+        {
+            
+        }
+    }
+
+
+}
+
 void    quotes_handler(t_cmd *cmd)
 {
     t_back_c    *bcmd;
@@ -76,6 +97,7 @@ void    quotes_handler(t_cmd *cmd)
     int         i;
 
     i = 0;
+    printf("zaaaab\n");
     if(cmd == 0)
         exit(0);
     else
@@ -89,15 +111,12 @@ void    quotes_handler(t_cmd *cmd)
                 if(ecmd->args[i][0] == '\'' && parse_quotes(ecmd->args[i]))
                 {
                     trim(ecmd->args[i], '\'');
-                    update(ecmd->args[i], ecmd->end_args[i]);
-                    ecmd->expend[i] = false;
+                    ecmd->expend[i] = to_expand(ecmd->args[i], 's');    
                 }
                 else if(ecmd->args[i][0] == '\"' && parse_quotes(ecmd->args[i]))
                 {
                     trim(ecmd->args[i], '\"');
-                    update(ecmd->args[i], ecmd->end_args[i]);
-                    if(ecmd->args[i][0] == '$')
-                        ecmd->expend[i] = true;
+                    ecmd->expend[i] = to_expand(ecmd->args[i], 'd');    
                 }   
                 i++;
             }
@@ -109,15 +128,12 @@ void    quotes_handler(t_cmd *cmd)
             if(rcmd->file[0] == '\'' && parse_quotes(rcmd->file))
             {
                 trim(rcmd->file, '\'');
-                update(rcmd->file, rcmd->efile);
-                rcmd->expend = false;
+                rcmd->expend = to_expand(rcmd->file, 's');    
             }
             else if(rcmd->file[0] == '\"' && parse_quotes(rcmd->file))
             {
                 trim(rcmd->file, '\"');
-                update(rcmd->file, rcmd->efile);
-                if(rcmd->file[0] == '$')
-                    rcmd->expend = true;
+                rcmd->expend = to_expand(rcmd->file, 'd');    
             }
         }
         else if(cmd->id == PIPE_ID || cmd->id == LIST_ID)
