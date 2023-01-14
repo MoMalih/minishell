@@ -1,0 +1,5 @@
+./Ds*
+./minishell
+*.o
+libft.a
+libft.h
