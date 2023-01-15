@@ -1,4 +1,16 @@
 #include "minishell.h"
+// void update(char *str, char *end_str)
+// {
+//     int i;
+
+//     i = 0;
+//     while (str[i] && i < ft_strlen(str))
+//     {
+//         end_str[i] = 0;
+//         i++;
+//     }
+//     end_str[i] = '\0';
+// }
 
 int parse_quotes(char *input)
 {
@@ -37,53 +49,99 @@ int parse_quotes(char *input)
     return 1;
 }
 
-void trim(char *str, char c)
-{
-    int count;
-    int i;
+// delete the quotes leaving everything inside
 
-    i = 0;
-    count = 0;
-    while (str[i] && i < ft_strlen(str))
+char *trim(char *str, char c)
+{
+   int it;
+    int it2;
+
+    it = 0;
+    it2 = 0;
+    while(str[it])
     {
-        if (str[i] != c)
-            str[count++] = str[i];
-        i++;
+        if(str[it] == c)
+        {
+            it++;
+            continue;
+        }
+        str[it2] = str[it];
+        it++;
+        it2++;
     }
-    str[count] = '\0';
+    str[it2] = '\0';
+    return (str);
 }
 
-void update(char *str, char *end_str)
-{
-    int i;
-
-    i = 0;
-    while (str[i] && i < ft_strlen(str))
-    {
-        end_str[i] = 0;
-        i++;
-    }
-    end_str[i] = '\0';
-}
 
 t_bool    to_expand(char *str ,char quote)
 {
     int it;
 
     it = 0;
-    while(str[it] && it < ft_strlen(str))
+    if(quote == 's')
     {
-        if(quote == 's')
+        while(str[it])
         {
-            
-
+            if(str[it] == '\"')
+            {
+                to_expand(&str[it], 'c');
+                trim(&str[it], '\"');
+            }
+            it++;
         }
-        else if (quote == 'd')
-        {
-            
-        }
+        // trim(str, '\'');
+        return (false);
     }
+    else if (quote == 'd')
+    {
+        while(str[it])
+        {
+            if(str[it] == '$')
+                return(true);
+            it++;
+        }
+        // trim(str, '\"');
+    }
+    else if (quote == 'c')
+    {
+        while(str[it])
+        {
+            if(str[it] == '$')
+                return(true);
+            it++;
+        }
+        trim(str, '\"');
+    }
+    return (false);
+}
 
+void    search_exp(t_exec_c *ecmd)
+{
+    int it;
+    int it2;
+    char *str;
+
+    it = 0;
+    while(ecmd->args[it])
+    {
+        it2 = 0;
+        str = ecmd->args[it];
+        while(str[it2])
+        {
+            if(str[it2]== '\'')
+            {
+                ecmd->args[it] =  trim(&str[it2], '\'');
+                ecmd->expend[it] = to_expand(ecmd->args[it], 's');    
+            }
+            else if(str[it2] == '\"')
+            {
+                ecmd->args[it] = trim(&str[it2], '\"');
+                ecmd->expend[it] = to_expand(ecmd->args[it], 'd');    
+            }   
+        }
+        it++;
+    }
 
 }
 
@@ -97,7 +155,6 @@ void    quotes_handler(t_cmd *cmd)
     int         i;
 
     i = 0;
-    printf("zaaaab\n");
     if(cmd == 0)
         exit(0);
     else
@@ -107,17 +164,11 @@ void    quotes_handler(t_cmd *cmd)
         {
             ecmd = (t_exec_c *)cmd;
             while(ecmd->args[i])
-            {
-                if(ecmd->args[i][0] == '\'' && parse_quotes(ecmd->args[i]))
+            {          
+                if(parse_quotes(ecmd->args[i]))
                 {
-                    trim(ecmd->args[i], '\'');
-                    ecmd->expend[i] = to_expand(ecmd->args[i], 's');    
+                    search_exp(ecmd);
                 }
-                else if(ecmd->args[i][0] == '\"' && parse_quotes(ecmd->args[i]))
-                {
-                    trim(ecmd->args[i], '\"');
-                    ecmd->expend[i] = to_expand(ecmd->args[i], 'd');    
-                }   
                 i++;
             }
         }

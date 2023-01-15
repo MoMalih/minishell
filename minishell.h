@@ -33,8 +33,8 @@ typedef struct s_envlist
 
 
 typedef enum s_bool{
-    true,
     false,
+    true,
 }   t_bool;
 
 typedef struct s_cmd
