@@ -47,7 +47,7 @@ typedef struct s_exec_c
     int     id;
     char    *args[MAX_ARG];
     char    *end_args[MAX_ARG];
-    t_bool    expend[MAX_ARG];
+    t_bool    expand[MAX_ARG];
 }   t_exec_c;
 
 typedef struct s_redir_c
@@ -56,7 +56,7 @@ typedef struct s_redir_c
     t_cmd   *cmd;
     char    *file;
     char    *efile;
-    t_bool  expend;
+    t_bool  expand;
     int     flag;
     int     fd;
 }   t_redir_c;

@@ -42,36 +42,33 @@ int parse_quotes(char *input)
         i++;
     }
     if (single_count != 0 || double_count != 0)
-    {
-        printf("Error: Unclosed quotes\n");
-        return 0;
-    }
+        terminated("Error: Unclosed quotes\n");
     return 1;
 }
 
 // delete the quotes leaving everything inside
 
-char *trim(char *str, char c)
-{
-   int it;
-    int it2;
+// char *trim(char *str, char c)
+// {
+//    int it;
+//     int it2;
 
-    it = 0;
-    it2 = 0;
-    while(str[it])
-    {
-        if(str[it] == c)
-        {
-            it++;
-            continue;
-        }
-        str[it2] = str[it];
-        it++;
-        it2++;
-    }
-    str[it2] = '\0';
-    return (str);
-}
+//     it = 0;
+//     it2 = 0;
+//     while(str[it])
+//     {
+//         if(str[it] == c)
+//         {
+//             it++;
+//             continue;
+//         }
+//         str[it2] = str[it];
+//         it++;
+//         it2++;
+//     }
+//     str[it2] = '\0';
+//     return (str);
+// }
 
 
 t_bool    to_expand(char *str ,char quote)
@@ -86,11 +83,10 @@ t_bool    to_expand(char *str ,char quote)
             if(str[it] == '\"')
             {
                 to_expand(&str[it], 'c');
-                trim(&str[it], '\"');
+                // trim(&str[it], '\"');
             }
             it++;
         }
-        // trim(str, '\'');
         return (false);
     }
     else if (quote == 'd')
@@ -101,7 +97,6 @@ t_bool    to_expand(char *str ,char quote)
                 return(true);
             it++;
         }
-        // trim(str, '\"');
     }
     else if (quote == 'c')
     {
@@ -111,38 +106,64 @@ t_bool    to_expand(char *str ,char quote)
                 return(true);
             it++;
         }
-        trim(str, '\"');
     }
     return (false);
+}
+
+int is_alpha_num(int c)
+{
+    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
+        return 1;
+    return 0;
 }
 
 void    search_exp(t_exec_c *ecmd)
 {
     int it;
-    int it2;
+    int it_e;
+    int it_s;
     char *str;
 
+
     it = 0;
-    while(ecmd->args[it])
+    while(ecmd->args[it] && it <= MAX_ARG && parse_quotes(ecmd->args[it]))
     {
-        it2 = 0;
-        str = ecmd->args[it];
-        while(str[it2])
+        it_e = 0;
+        while(ecmd->args[it][it_e] && ecmd->args[it][it_e] != '\'')
         {
-            if(str[it2]== '\'')
+            // printf("it2 - it3 ->> [%d]\n", it_e);
+            if(ecmd->args[it][it_e] == '$')
             {
-                ecmd->args[it] =  trim(&str[it2], '\'');
-                ecmd->expend[it] = to_expand(ecmd->args[it], 's');    
+                it_s = it_e + 1;
+                // printf("NUMM >>>> [%d]\n", it_e);
+                while(ecmd->args[it][it_e]
+                        && (ecmd->args[it][it_e] != '\'' || ecmd->args[it][it_e] == '\"'))
+                {
+                    printf("ALPHA >>>> [%d]\n", it_e);
+                    it_e++;
+                }
+                while(it_s <= it_e)
+                {
+                    str[it_s] = ecmd->args[it][it_s];
+                    it_s++;
+                }
+                // printf("STRI_EXP >>>> [%c]\n", str[len - 1]);
+                // ecmd->expand[it] = true;
             }
-            else if(str[it2] == '\"')
-            {
-                ecmd->args[it] = trim(&str[it2], '\"');
-                ecmd->expend[it] = to_expand(ecmd->args[it], 'd');    
-            }   
+            it_e++;
         }
+        str[it_e] = '\0';
         it++;
+        // printf("it3 >> [%d]\n", it3);
+        // printf("len >> [%d]\n", (it3 - it2 + 1));
     }
 
+    // printf("EXPANSION ZMLA>>>>>> [%s]", str);
+
+            // else if(str[it2]== '\'')
+            //     ecmd->expand[it] = to_expand(ecmd->args[it], 's');
+            // else if(str[it2] == '\"')
+            //     ecmd->expand[it] = to_expand(ecmd->args[it], 'd');
 }
 
 void    quotes_handler(t_cmd *cmd)
@@ -159,33 +180,25 @@ void    quotes_handler(t_cmd *cmd)
         exit(0);
     else
     {
-
+        // printf("START\n");
         if(cmd->id == EXEC_ID)
         {
             ecmd = (t_exec_c *)cmd;
-            while(ecmd->args[i])
-            {          
-                if(parse_quotes(ecmd->args[i]))
-                {
-                    search_exp(ecmd);
-                }
-                i++;
-            }
+            search_exp(ecmd);
         }
         else if(cmd->id == REDIR_ID)
         {
             rcmd = (t_redir_c *)cmd;
-
-            if(rcmd->file[0] == '\'' && parse_quotes(rcmd->file))
-            {
-                trim(rcmd->file, '\'');
-                rcmd->expend = to_expand(rcmd->file, 's');    
-            }
-            else if(rcmd->file[0] == '\"' && parse_quotes(rcmd->file))
-            {
-                trim(rcmd->file, '\"');
-                rcmd->expend = to_expand(rcmd->file, 'd');    
-            }
+            // if(rcmd->file[0] == '\'' && parse_quotes(rcmd->file))
+            // {
+            //     // trim(rcmd->file, '\'');
+            //     rcmd->expand = to_expand(rcmd->file, 's');
+            // }
+            // else if(rcmd->file[0] == '\"' && parse_quotes(rcmd->file))
+            // {
+            //     // trim(rcmd->file, '\"');
+            //     rcmd->expand = to_expand(rcmd->file, 'd');
+            // }
         }
         else if(cmd->id == PIPE_ID || cmd->id == LIST_ID)
         {

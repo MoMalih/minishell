@@ -42,7 +42,10 @@ void *ft_memset(void *b, int c, size_t len)
 void terminated(char *s)
 {
 	if (s)
+	{
 		printf("%s\n", s);
+	    kill(0, SIGTERM);
+	}
 	exit(1);
 }
 

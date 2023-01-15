@@ -30,7 +30,7 @@ t_cmd *redir_c(t_cmd *sub_cmd, char *file, char *efile, int flag, int fd)
     cmd->id = REDIR_ID;
     cmd->cmd = sub_cmd;
     cmd->file = file;
-    cmd->expend = false;
+    cmd->expand = false;
     cmd->efile = efile;
     cmd->flag = flag;
     cmd->fd = fd;
