@@ -156,8 +156,8 @@ t_cmd   *parsecmd(char *buf)
         printf("l_ovrs: [%s]\n", buf);
         terminated("syntax\n");
     }
-	// quotes_handler(cmd);
     n_term(cmd);
+	quotes_handler(cmd);
 	// printf("###	## CMD %d>> \n", cmd->id);
     return cmd; 
 }
