@@ -112,11 +112,10 @@ int parse_quotes(char *input)
 
 int is_alpha_num(int c)
 {
-    if (c >= '0' && c <= '9')
-        return (1);
-    if (c >= 'a' && c <= 'z')
-        return (1);
-    if (c >= 'A' && c <= 'Z')
+    // printf("zzzzzzzzzz\n");
+    if ((c >= '0' && c <= '9')
+        || (c >= 'a' && c <= 'z')
+        || (c >= 'A' && c <= 'Z'))
         return (1);
     return (0);
 }
@@ -157,39 +156,67 @@ char *my_strstr(const char *haystack, const char *needle) {
     return NULL;
 }
 
-int    search_exp(char *cmd)
+char *find_env(char *name, t_envlist *list)
+{
+    t_envlist *it_list;
+
+    it_list = list;
+    while(it_list->next)
+    {
+        if(it_list->next->name == name)
+            return it_list->content;
+        it_list = it_list->next;
+    }
+    return NULL;
+}
+
+int    search_exp(char *cmd, t_exec_c *ecmd, t_envlist *list, int mark)
 {
     int it;
     int it_e;
+    int it_s;
     int single_count;
     int double_count;
-    char *str;
+    char *var;
 
     it_e = 0;
+    it_s = 0;
     single_count = 0;
     double_count = 0;
     while(cmd[it_e] && it_e < ft_strlen(cmd))
     {
         count_quotes(cmd[it_e], &single_count, &double_count);
-        if(((cmd[it_e] == '$') && single_count % 2 == 0) 
-            || ((cmd[it_e] == '$') &&  double_count >= 0))
+        if((cmd[it_e] == '$' && single_count % 2 == 0) 
+            || (cmd[it_e] == '$' &&  double_count >= 0))
         {
-            it = 0;
-            while(is_alpha_num(cmd[++it_e]) && it_e < ft_strlen(cmd))
+            it_s = it_e + 1;
+            while(++it_e < (ft_strlen(cmd) - it_s + 1) && is_alpha_num(cmd[it_e]))
+
+            var = find_env(ft_substr(cmd, it_s, it_e), list);
+            printf("VARR_CONTENT >> [%s]\n", var);
+            it = -1;
+            while(ecmd->args[it_s] && var[it])
             {
-                str[it] = cmd[it_e];
-                printf("EXPANSION [%c]\n\n", str[it]);
-                it++;
-            }    
-            str[it] = '\0';
-            return (true);
+                if(it_s <= it_e)
+                {
+                    ecmd->args[mark][it_s] = var[++it];
+                }
+                else
+                    ecmd->args[mark][it_s] = ecmd->args[mark][it_e];
+                it_s++;
+                it_e++;
+            }
+            // printf("EXPANSION [%s]\n", ecmd->args[mark]);
+
+            if(!cmd[it_e])
+                return (true);
         }
         it_e++;
     }
     return (false);
 }
 
-void    quotes_handler(t_cmd *cmd)
+void    quotes_handler(t_cmd *cmd, t_envlist *envlist)
 {
     t_back_c    *bcmd;
     t_exec_c    *ecmd;
@@ -208,7 +235,8 @@ void    quotes_handler(t_cmd *cmd)
             ecmd = (t_exec_c *)cmd;
             while (ecmd->args[it] != NULL && parse_quotes(ecmd->args[it]))
             {
-                ecmd->expand[it] = search_exp(ecmd->args[it]);
+                // printf("CMD_>> [%s]\n", ecmd->args[it]);
+                ecmd->expand[it] = search_exp(ecmd->args[it], ecmd, envlist, it);
                 // if(ecmd->expand[it])
                     // my_strstr(ecmd->args[it], "$");
                 it++;
@@ -219,20 +247,20 @@ void    quotes_handler(t_cmd *cmd)
             rcmd = (t_redir_c *)cmd;
             if (parse_quotes(rcmd->file))
             {
-                rcmd->expand = search_exp(rcmd->file);
-                printf("EXPANSION [%d]\n", rcmd->expand);
+                // rcmd->expand = search_exp(rcmd->file, rcmd, envlist);
+                // printf("EXPANSION [%d]\n", rcmd->expand);
             } 
         }
         else if(cmd->id == PIPE_ID || cmd->id == LIST_ID)
         {
             pcmd = (t_pipe_c *)cmd;
-            quotes_handler(pcmd->left);
-            quotes_handler(pcmd->right);
+            quotes_handler(pcmd->left, envlist);
+            quotes_handler(pcmd->right, envlist);
         }
         else if(cmd->id == BACK_ID)
         {
             bcmd = (t_back_c *)cmd;
-            quotes_handler(bcmd->cmd);
+            quotes_handler(bcmd->cmd, envlist);
         }
 
     }

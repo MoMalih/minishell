@@ -111,7 +111,7 @@ char    **strstrip(char *str, char c);
 void	safe_free(void **ptr);
 
 //  parse
-t_cmd   *parsecmd(char *buf);
+t_cmd   *parsecmd(char *buf, t_envlist *env_list);
 t_cmd   *parseline(char **ptr, char *end_ptr);
 t_cmd   *parsepipe(char **ptr, char *end_ptr);
 t_cmd   *parseexec(char **ptr, char *end_ptr);
@@ -151,5 +151,6 @@ void	handle_quit(int sig_code);
 
 // printf
 void    my_printf(int fd, const char *fmt, ...);
-void    quotes_handler(t_cmd *cmd);
+void    quotes_handler(t_cmd *cmd, t_envlist *env);
+
 #endif

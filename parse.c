@@ -138,7 +138,7 @@ t_cmd   *parseline(char **ptr, char *end_ptr)
 	return cmd;
 }
 
-t_cmd   *parsecmd(char *buf)
+t_cmd   *parsecmd(char *buf, t_envlist *envlist)
 {
     t_cmd *cmd;
     char *e_ptr;
@@ -157,7 +157,7 @@ t_cmd   *parsecmd(char *buf)
         terminated("syntax\n");
     }
     n_term(cmd);
-	quotes_handler(cmd);
+	quotes_handler(cmd, envlist);
 	// printf("###	## CMD %d>> \n", cmd->id);
     return cmd; 
 }

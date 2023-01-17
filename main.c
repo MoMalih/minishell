@@ -205,7 +205,7 @@ int main(int ac, char **av, char **env)
         // }
         if (fork_protected() == 0)
         {
-            cmd = parsecmd(buf);
+            cmd = parsecmd(buf, env_inf.envlist);
             // quotes_handler(cmd);
         } 
         else
