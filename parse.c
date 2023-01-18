@@ -148,7 +148,7 @@ t_cmd   *parsecmd(char *buf, t_envlist *envlist)
 	// printf("## len [%lu] \n", strlen(buf));
 	// printf("## end [%s] \n", e_ptr);
     cmd = parseline(&buf, e_ptr);
-    jump(&buf, e_ptr, "");
+    jump(&buf, e_ptr, " ");
     if (buf != e_ptr)
     {
 		// printf("## buf [%s]\n", buf);

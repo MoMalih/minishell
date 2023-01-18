@@ -156,15 +156,18 @@ char *my_strstr(const char *haystack, const char *needle) {
     return NULL;
 }
 
-char *find_env(char *name, t_envlist *list)
+char    *find_env(char *name, t_envlist *list)
 {
-    t_envlist *it_list;
+    t_envlist   *it_list;
 
     it_list = list;
-    while(it_list->next)
+    while(it_list->next && name && it_list->name)
     {
-        if(it_list->next->name == name)
-            return it_list->content;
+        if(ft_strlen(it_list->name) == ft_strlen(name))
+        {
+            if(!ft_strncmp(it_list->name, name, ft_strlen(name)))
+                return (it_list->content);
+        }
         it_list = it_list->next;
     }
     return NULL;
@@ -183,6 +186,7 @@ int    search_exp(char *cmd, t_exec_c *ecmd, t_envlist *list, int mark)
     it_s = 0;
     single_count = 0;
     double_count = 0;
+    var = NULL;
     while(cmd[it_e] && it_e < ft_strlen(cmd))
     {
         count_quotes(cmd[it_e], &single_count, &double_count);
@@ -190,10 +194,14 @@ int    search_exp(char *cmd, t_exec_c *ecmd, t_envlist *list, int mark)
             || (cmd[it_e] == '$' &&  double_count >= 0))
         {
             it_s = it_e + 1;
-            while(++it_e < (ft_strlen(cmd) - it_s + 1) && is_alpha_num(cmd[it_e]))
-
-            var = find_env(ft_substr(cmd, it_s, it_e), list);
-            printf("VARR_CONTENT >> [%s]\n", var);
+            while((++it_e < (ft_strlen(cmd) - it_s + 1)) && (is_alpha_num(cmd[it_e])
+                || cmd[it_e] == '_' || cmd[it_e] == '-'))
+            
+            printf("IT_E >> [%d]\n", it_e);
+            printf("IT_S >> [%d]\n", it_s);
+            printf("STR >> [%s]\n", ft_substr(cmd, it_s, (it_e - (1 + double_count + single_count))));
+            var = find_env(ft_substr(cmd, it_s, (it_e - (1 + double_count + single_count))), list);
+            printf("VAR >> [%s]\n", var);
             it = -1;
             while(ecmd->args[it_s] && var[it])
             {

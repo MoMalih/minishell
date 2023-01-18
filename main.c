@@ -210,7 +210,7 @@ int main(int ac, char **av, char **env)
         } 
         else
             wait(NULL);
-        // print_cmd(cmd);
+        print_cmd(cmd);
     }
     // kill(0, SIGTERM);
     exit(1);
