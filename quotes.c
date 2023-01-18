@@ -191,29 +191,33 @@ int    search_exp(char *cmd, t_exec_c *ecmd, t_envlist *list, int mark)
     {
         count_quotes(cmd[it_e], &single_count, &double_count);
         if((cmd[it_e] == '$' && single_count % 2 == 0) 
-            || (cmd[it_e] == '$' &&  double_count >= 0))
+            || (cmd[it_e] == '$' &&  double_count >= 1))
         {
             it_s = it_e + 1;
             while((++it_e < (ft_strlen(cmd) - it_s + 1)) && (is_alpha_num(cmd[it_e])
                 || cmd[it_e] == '_' || cmd[it_e] == '-'))
             
-            printf("IT_E >> [%d]\n", it_e);
-            printf("IT_S >> [%d]\n", it_s);
+            if(cmd[it_e + 1] == '$')
+                search_exp(&cmd[it_e + 1], ecmd, list, mark);
+            
+            // printf("IT_E >> [%d]\n", it_e);
+            // printf("IT_S >> [%d]\n", it_s);
             printf("STR >> [%s]\n", ft_substr(cmd, it_s, (it_e - (1 + double_count + single_count))));
             var = find_env(ft_substr(cmd, it_s, (it_e - (1 + double_count + single_count))), list);
             printf("VAR >> [%s]\n", var);
-            it = -1;
-            while(ecmd->args[it_s] && var[it])
-            {
-                if(it_s <= it_e)
-                {
-                    ecmd->args[mark][it_s] = var[++it];
-                }
-                else
-                    ecmd->args[mark][it_s] = ecmd->args[mark][it_e];
-                it_s++;
-                it_e++;
-            }
+
+            // it = -1;
+            // while(ecmd->args[it_s] && var[it])
+            // {
+            //     if(it_s <= it_e)
+            //     {
+            //         ecmd->args[mark][it_s] = var[++it];
+            //     }
+            //     else
+            //         ecmd->args[mark][it_s] = ecmd->args[mark][it_e];
+            //     it_s++;
+            //     it_e++;
+            // }
             // printf("EXPANSION [%s]\n", ecmd->args[mark]);
 
             if(!cmd[it_e])
