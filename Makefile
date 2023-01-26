@@ -9,11 +9,12 @@ Flag = -Werror -Wextra -Wall -g
 LIBFT_BINARY = libft.a 
 
 READLINE = 	-lreadline\
-			-L /usr/local/Cellar/readline/8.2.1/lib\
-			-I usr/local/Cellar/readline/8.2.1/include
+			-L /Users/$(USER)/goinfre/lib\
+			-I /Users/$(USER)/goinfre/include
+			
+			# -L /usr/local/Cellar/readline/8.2.1/lib\
+			# -I usr/local/Cellar/readline/8.2.1/include
 
-			# -L /Users/$(USER)/goinfre/lib\
-			# -I /Users/$(USER)/goinfre/include
 
 SRC = main.c constructor.c help_func.c parse.c n_term.c signal.c\
 	env_tools.c quotes.c

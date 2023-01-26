@@ -12,32 +12,35 @@ t_cmd   *parseredirs(t_cmd *o_cmd, char **ptr, char *end_ptr)
 	{
 		tok = init_token(ptr, end_ptr, 0, 0);
 		// printf("TOKEN #### >> %d\n", tok);
-		if(init_token(ptr, end_ptr, &cmd, &end_cmd) != 'a')
+		if(init_token(ptr, end_ptr, &cmd, &end_cmd))
+		{
+			if(tok == '<' && tok)
+			{
+				// INPUT REDIR
+				o_cmd = redir_c(o_cmd, cmd, end_cmd, O_RDONLY, 0);
+				break;
+			}
+			else if (tok =='>' && tok)
+			{
+				// REDIR OVERWRITE
+				o_cmd = redir_c(o_cmd, cmd, end_cmd, O_WRONLY|O_CREAT, 1);
+				break;
+			}
+			else if(tok == '+' && tok)
+			{ 
+				// APPEND REDIR
+				o_cmd = redir_c(o_cmd, cmd, end_cmd, O_APPEND|O_CREAT, 1);
+				break;
+			}
+			else if(tok == 'H' && tok)
+			{
+				// HEREDOC REDIR
+				o_cmd = redir_c(o_cmd, cmd, end_cmd, 0, -1);     
+				break;
+			}
+		}
+		else
 			terminated("missing file for redirection");
-		if(tok == '<' && tok)
-		{
-			// INPUT REDIR
-			o_cmd = redir_c(o_cmd, cmd, end_cmd, O_RDONLY, 0);
-			break;
-		}
-		else if (tok =='>' && tok)
-		{
-			// REDIR OVERWRITE
-			o_cmd = redir_c(o_cmd, cmd, end_cmd, O_WRONLY|O_CREAT, 1);
-			break;
-		}
-		else if(tok == '+' && tok)
-		{ 
-			// APPEND REDIR
-			o_cmd = redir_c(o_cmd, cmd, end_cmd, O_APPEND|O_CREAT, 1);
-			break;
-		}
-		else if(tok == 'H' && tok)
-		{
-			// HEREDOC REDIR
-			o_cmd = redir_c(o_cmd, cmd, end_cmd, 0, -1);     
-			break;
-		}
   	}
 	// printf("##### DIRS >> %d\n", o_cmd->id);
 
@@ -76,7 +79,7 @@ void trim_quotes(char **cmd, char **end_cmd, char mark)
 		else if(*start == mark)
 		{
 			*cmd = start + 1;
-			*end_cmd = end - 1;
+			// *end_cmd = end - 1;
 			break;
 		}
 		start++;
@@ -109,6 +112,7 @@ t_cmd   *parseexec(char **ptr, char *end_ptr)
 			break;	
 		if(tok == 34 || tok == 39 || tok == 92)
 			trim_quotes(&cmd, &end_cmd, cmd[0]);
+			// continue;
 		else if(tok != 'a')
 			terminated("syntax");
 		e_cmd->args[ac] = cmd;

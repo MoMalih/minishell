@@ -4,8 +4,9 @@ void handle_int(int signo)
 {
 	if (signo == SIGINT)
     {
-		// rl_replace_line("", 0);
+		// printf("\n");
 		rl_on_new_line();
+		rl_free_line_state();
 		rl_redisplay();
 	}
 }
@@ -18,8 +19,9 @@ void handle_quit(int sig_code)
 	}
 	else
 	{
-		// rl_replace_line("", 0);
+		// printf("\n");
 		rl_on_new_line();
+		rl_free_line_state();
 		rl_redisplay();
 	}
 }

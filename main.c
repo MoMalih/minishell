@@ -63,14 +63,16 @@ int search_last_quote(char *s, char *es, char mark)
 
     it = 0;
     bow = 0;
-    while (s < es && !ft_strchr(SYMBOL, *s))
+    while (s < es && !ft_strchr(SYMBOL, *s) && !ft_strchr("<>", *s))
     {
         s++;
         if (*s == mark)
             bow = it;
         else if (*s == '\\')
+            s++;
         it++;
     }
+    // printf(">>[%d]\n", bow);
     return (bow);
 }
 
@@ -105,15 +107,15 @@ char *switch_token(char *s, char *es, int *ret)
         else if (*s == '\'' || *s == '\"')
         {
             *ret = *s;
-            s++;
             int i = search_last_quote(s, es, *s) + 1;
-            while (*s && !ft_strchr(SYMBOL, *s) && i-- >= 0)
+            s++;
+            while (*s && !ft_strchr(SYMBOL, *s) && i-- > 0)
                 s++;
         }   
         else
         {
             *ret = 'a';
-            while (s < es && !ft_strchr(SPACE, *s) && !ft_strchr(SYMBOL, *s))
+            while (s < es && !ft_strchr(SPACE, *s) && !ft_strchr("<>", *s) && !ft_strchr(SYMBOL, *s))
                 s++;
         }
     }
