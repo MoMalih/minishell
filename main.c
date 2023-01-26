@@ -56,11 +56,31 @@ int init_token(char **ps, char *end_s, char **q, char **eq)
     return ret;
 }
 
+int search_last_quote(char *s, char *es, char mark)
+{
+    int it;
+    int bow;
+
+    it = 0;
+    bow = 0;
+    while (s < es && !ft_strchr(SYMBOL, *s))
+    {
+        s++;
+        if (*s == mark)
+            bow = it;
+        else if (*s == '\\')
+        it++;
+    }
+    return (bow);
+}
+
 char *switch_token(char *s, char *es, int *ret)
 {
+    // int taf;
+
+    // taf = 0;
     if (*s)
     {
-        // printf("SWITCH TOKEN \n");
         if (ft_strchr(SYMBOL, *s))
             s++;
         
@@ -82,6 +102,14 @@ char *switch_token(char *s, char *es, int *ret)
                 s++;
             }
         }
+        else if (*s == '\'' || *s == '\"')
+        {
+            *ret = *s;
+            s++;
+            int i = search_last_quote(s, es, *s) + 1;
+            while (*s && !ft_strchr(SYMBOL, *s) && i-- >= 0)
+                s++;
+        }   
         else
         {
             *ret = 'a';
@@ -204,14 +232,11 @@ int main(int ac, char **av, char **env)
         //     continue;
         // }
         if (fork_protected() == 0)
-        {
             cmd = parsecmd(buf, env_inf.envlist);
-            // quotes_handler(cmd);
-        } 
         else
             wait(NULL);
         print_cmd(cmd);
     }
-    // kill(0, SIGTERM);
+    kill(0, SIGTERM);
     exit(1);
 }

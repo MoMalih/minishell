@@ -152,5 +152,6 @@ void	handle_quit(int sig_code);
 // printf
 void    my_printf(int fd, const char *fmt, ...);
 void    quotes_handler(t_cmd *cmd, t_envlist *env);
-
+void    count_quotes(char cmd_char, int *single_count, int *double_count);
+int     parse_quotes(char *input);
 #endif

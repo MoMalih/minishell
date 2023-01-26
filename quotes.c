@@ -21,6 +21,7 @@ int parse_quotes(char *input)
     i = 0;
     while (i < strlen(input)) 
     {
+        // printf("input[%d]: {%c}\n", i, input[i]);
         if (input[i] == '\'')
         {
             if (single_count == 0)
@@ -41,6 +42,7 @@ int parse_quotes(char *input)
             // process the character as a command
         i++;
     }
+    // printf("single_count: {%d}, double_count: {%d}\n", single_count, double_count);
     if (single_count != 0 || double_count != 0)
         terminated("Error: Unclosed quotes\n");
     return 1;
@@ -48,26 +50,27 @@ int parse_quotes(char *input)
 
 // delete the quotes leaving everything inside
 
-// char *trim(char *str, char c)
+// char *trim_quotes(char *str, int *sgl, int *dbl)
 // {
-//    int it;
-//     int it2;
+//     int i;
+//     int j;
+//     char *new_str;
 
-//     it = 0;
-//     it2 = 0;
-//     while(str[it])
+//     i = 0;
+//     j = 0;
+//     new_str = malloc(sizeof(char) * (strlen(str) - 1));
+//     if (str[i] == '\'' || str[i] == '\"')
+//         i++;
+//     while (str[i])
 //     {
-//         if(str[it] == c)
-//         {
-//             it++;
-//             continue;
-//         }
-//         str[it2] = str[it];
-//         it++;
-//         it2++;
+//         new_str[j] = str[i];
+//         i++;
+//         j++;
 //     }
-//     str[it2] = '\0';
-//     return (str);
+//     if (str[i] == '\'' || str[i] == '\"')
+//         i++;
+//     new_str[j] = '\0';
+//     return new_str;
 // }
 
 
@@ -115,45 +118,28 @@ int is_alpha_num(int c)
     // printf("zzzzzzzzzz\n");
     if ((c >= '0' && c <= '9')
         || (c >= 'a' && c <= 'z')
-        || (c >= 'A' && c <= 'Z'))
+        || (c >= 'A' && c <= 'Z')
+        || (c == '_' || c == '-'))
         return (1);
     return (0);
 }
 
-void    count_quotes(char cmd_char, int *single_count, int *double_count)
+void    count_quotes(char cmd, int *single_count, int *double_count)
 {
-    if(cmd_char)
-    {
-        if(cmd_char == '\'')
-            *single_count += 1;
-        else if(cmd_char == '\"')
-            *double_count += 1;
-    }
-}
+    // int it;
 
-char *my_strstr(const char *haystack, const char *needle) {
-    int i;
-    int j;
-    int needle_len;
-    int haystack_len;
+    // it = 0;
+    // while(cmd[it] && it < ft_strlen(cmd))
+    // {
 
-    i = 0;
-    needle_len = strlen(needle);
-    haystack_len = strlen(haystack);
-    while (i < haystack_len - needle_len + 1)
-    {
-        j = 0;
-        while (j < needle_len)
+        if(cmd)
         {
-            if (haystack[i + j] != needle[j])
-                break;
-            j++;
+            if(cmd == '\'')
+                *single_count += 1;
+            else if(cmd == '\"')
+                *double_count += 1;
         }
-        if (j == needle_len)
-            return (char *)haystack + i;
-        i++;
-    }
-    return NULL;
+    // }
 }
 
 char    *find_env(char *name, t_envlist *list)
@@ -173,39 +159,62 @@ char    *find_env(char *name, t_envlist *list)
     return NULL;
 }
 
-int    search_exp(char *cmd, t_exec_c *ecmd, t_envlist *list, int mark)
+int validate(char *cmd)
 {
     int it;
-    int it_e;
-    int it_s;
     int single_count;
     int double_count;
+    int up;
+
+    it = 0;
+    up = 0;
+    single_count = 0;
+    double_count = 0;
+    while(cmd[it] && it < ft_strlen(cmd))
+    {
+        if(cmd[it] == '\"' && single_count == 0)
+            up++;
+        count_quotes(cmd[it], &single_count, &double_count);
+        if(single_count == 1 && double_count == 0)
+            return (0);
+        else if(single_count == 0 && double_count == 1)
+            return (1);
+        else if(single_count == 1 && double_count == 1 && up >= 1)
+            return (1);
+        else if(single_count == 1 && double_count == 1 && up == 0)
+            return (0);
+        else if(single_count == 0 && double_count == 0)
+            return (1);
+        it++;
+    }
+    return (1);
+}
+
+void    search_exp(char *cmd, t_exec_c *ecmd, t_envlist *list, int mark)
+{
+    int it_e;
+    int it_s;
+    int len;
     char *var;
 
     it_e = 0;
     it_s = 0;
-    single_count = 0;
-    double_count = 0;
-    var = NULL;
     while(cmd[it_e] && it_e < ft_strlen(cmd))
     {
-        count_quotes(cmd[it_e], &single_count, &double_count);
-        if((cmd[it_e] == '$' && single_count % 2 == 0) 
-            || (cmd[it_e] == '$' &&  double_count >= 1))
+        // count_quotes(cmd[it_e], &single_count, &double_count);
+        var = NULL;
+        len = 0;
+        if(cmd[it_e] == '$' && validate(cmd))
         {
             it_s = it_e + 1;
-            while((++it_e < (ft_strlen(cmd) - it_s + 1)) && (is_alpha_num(cmd[it_e])
-                || cmd[it_e] == '_' || cmd[it_e] == '-'))
-            
-            if(cmd[it_e + 1] == '$')
-                search_exp(&cmd[it_e + 1], ecmd, list, mark);
-            
-            // printf("IT_E >> [%d]\n", it_e);
-            // printf("IT_S >> [%d]\n", it_s);
-            printf("STR >> [%s]\n", ft_substr(cmd, it_s, (it_e - (1 + double_count + single_count))));
-            var = find_env(ft_substr(cmd, it_s, (it_e - (1 + double_count + single_count))), list);
-            printf("VAR >> [%s]\n", var);
-
+            while(is_alpha_num(cmd[++it_e]) && it_e < ft_strlen(cmd))
+                len++;
+            // printf("STR_QUO >> [%s]\n", ft_substr(cmd, it_s, len));
+            var = find_env(ft_substr(cmd, it_s, len), list);
+            if (var)
+                printf("VAR_QUO >> [%s]\n", var);
+            if(cmd[it_e] == '$' && validate(cmd))
+                it_e--;
             // it = -1;
             // while(ecmd->args[it_s] && var[it])
             // {
@@ -219,13 +228,15 @@ int    search_exp(char *cmd, t_exec_c *ecmd, t_envlist *list, int mark)
             //     it_e++;
             // }
             // printf("EXPANSION [%s]\n", ecmd->args[mark]);
+            // if(ecmd->expand[mark] == true)
+            //     search_exp(&cmd[it_e], ecmd, list, mark);
 
-            if(!cmd[it_e])
-                return (true);
         }
         it_e++;
     }
-    return (false);
+    // if(ecmd->expand[mark] == true)
+    //         search_exp(&cmd[it_e], ecmd, list, mark);
+    // return (false);
 }
 
 void    quotes_handler(t_cmd *cmd, t_envlist *envlist)
@@ -245,14 +256,17 @@ void    quotes_handler(t_cmd *cmd, t_envlist *envlist)
         {
             it = 0;
             ecmd = (t_exec_c *)cmd;
-            while (ecmd->args[it] != NULL && parse_quotes(ecmd->args[it]))
-            {
-                // printf("CMD_>> [%s]\n", ecmd->args[it]);
-                ecmd->expand[it] = search_exp(ecmd->args[it], ecmd, envlist, it);
-                // if(ecmd->expand[it])
-                    // my_strstr(ecmd->args[it], "$");
-                it++;
-            }    
+            // if(parse_quotes(ecmd->args[it]))
+            // {
+                while (ecmd->args[it] != NULL)
+                {
+                    search_exp(ecmd->args[it], ecmd, envlist, it);
+                    // printf("CMD_>> [%s]\n", ecmd->args[it]);
+                    // if(ecmd->expand[it])
+                        // my_strstr(ecmd->args[it], "$");
+                    it++;
+                }    
+            // }
         }
         else if(cmd->id == REDIR_ID)
         {

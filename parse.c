@@ -62,18 +62,41 @@ t_cmd  *parseblock(char **ptr, char *end_ptr)
 	return (cmd);
 }
 
+void trim_quotes(char **cmd, char **end_cmd, char mark)
+{
+	char	*start;
+	char	*end;
+
+	start = *cmd;
+	end = *end_cmd;
+	while(start < end)
+	{
+		if(*start == '\\')
+			start++;
+		else if(*start == mark)
+		{
+			*cmd = start + 1;
+			*end_cmd = end - 1;
+			break;
+		}
+		start++;
+	}
+}
+
+
 t_cmd   *parseexec(char **ptr, char *end_ptr)
 {
 	char *cmd;
 	char *end_cmd;
 	int tok;
-	int ac;
+	int ac;		
 	t_exec_c *e_cmd;
 	t_cmd *res;
 
 	if(jump(ptr, end_ptr, "("))
 		return parseblock(ptr, end_ptr);
 
+	// cmd = *ptr;
 	res = exec_c();
 	e_cmd = (t_exec_c *)res;
 	ac = 0;
@@ -83,11 +106,12 @@ t_cmd   *parseexec(char **ptr, char *end_ptr)
 	while(!jump(ptr, end_ptr, "|)&;"))
 	{
 		if((tok = init_token(ptr, end_ptr, &cmd, &end_cmd)) == 0)
-			break;
+			break;	
+		if(tok == 34 || tok == 39 || tok == 92)
+			trim_quotes(&cmd, &end_cmd, cmd[0]);
 		else if(tok != 'a')
 			terminated("syntax");
 		e_cmd->args[ac] = cmd;
-		// e_cmd->expend[ac] = false;
 		e_cmd->end_args[ac] = end_cmd;
 		ac++;
 		if(ac >= MAX_ARG)
@@ -96,7 +120,6 @@ t_cmd   *parseexec(char **ptr, char *end_ptr)
 	}
 	e_cmd->args[ac] = 0;
 	e_cmd->end_args[ac] = 0;
-	// printf("##### EXEC >> %d\n", res->id);
 	return res;
 }
 
@@ -156,8 +179,8 @@ t_cmd   *parsecmd(char *buf, t_envlist *envlist)
         printf("l_ovrs: [%s]\n", buf);
         terminated("syntax\n");
     }
-    n_term(cmd);
 	quotes_handler(cmd, envlist);
+    n_term(cmd);
 	// printf("###	## CMD %d>> \n", cmd->id);
     return cmd; 
 }
