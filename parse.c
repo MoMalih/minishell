@@ -65,23 +65,17 @@ t_cmd  *parseblock(char **ptr, char *end_ptr)
 	return (cmd);
 }
 
-void trim_quotes(char **cmd, char **end_cmd, char mark)
+void trim_quote(char **cmd, char **end_cmd, char mark)
 {
 	char	*start;
-	char	*end;
 
 	start = *cmd;
-	end = *end_cmd;
-	while(start < end)
+	if(start < *end_cmd)
 	{
 		if(*start == '\\')
 			start++;
 		else if(*start == mark)
-		{
 			*cmd = start + 1;
-			// *end_cmd = end - 1;
-			break;
-		}
 		start++;
 	}
 }
@@ -110,11 +104,12 @@ t_cmd   *parseexec(char **ptr, char *end_ptr)
 	{
 		if((tok = init_token(ptr, end_ptr, &cmd, &end_cmd)) == 0)
 			break;	
+		// printf(">>[%c]\n", cmd[0]);
 		if(tok == 34 || tok == 39 || tok == 92)
-			trim_quotes(&cmd, &end_cmd, cmd[0]);
+			trim_quote(&cmd, &end_cmd, cmd[0]);
 			// continue;
-		else if(tok != 'a')
-			terminated("syntax");
+		// else if(tok != 'a')
+		// 	terminated("syntax");
 		e_cmd->args[ac] = cmd;
 		e_cmd->end_args[ac] = end_cmd;
 		ac++;

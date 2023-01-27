@@ -192,11 +192,14 @@ int validate(char *cmd)
 
 void    search_exp(char *cmd, t_exec_c *ecmd, t_envlist *list, int mark)
 {
+    int it;
     int it_e;
     int it_s;
     int len;
+    char *env_var;
     char *var;
 
+    it = 0;
     it_e = 0;
     it_s = 0;
     while(cmd[it_e] && it_e < ft_strlen(cmd))
@@ -210,11 +213,27 @@ void    search_exp(char *cmd, t_exec_c *ecmd, t_envlist *list, int mark)
             while(is_alpha_num(cmd[++it_e]) && it_e < ft_strlen(cmd))
                 len++;
             // printf("STR_QUO >> [%s]\n", ft_substr(cmd, it_s, len));
-            var = find_env(ft_substr(cmd, it_s, len), list);
-            if (var)
-                printf("VAR_QUO >> [%s]\n", var);
+            env_var = ft_substr(cmd, it_s, len);
+            var = find_env(env_var, list);
+            printf("VAR_QUO >> [%s]\n", var);
+            printf("VAR_ENV >> [%s]\n", env_var);
+            // if (var)
             if(cmd[it_e] == '$' && validate(cmd))
+            {
+
                 it_e--;
+                printf(">>>>[%s]\n", cmd);
+                while(cmd[it])
+                {
+                    if(it == it_s)
+                    {
+                        cmd[it] = *ft_strjoin(var, &cmd[len]);
+                        break;
+                    }   
+                    it++;
+                }
+            }
+
             // it = -1;
             // while(ecmd->args[it_s] && var[it])
             // {

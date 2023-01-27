@@ -107,7 +107,7 @@ char *switch_token(char *s, char *es, int *ret)
         else if (*s == '\'' || *s == '\"')
         {
             *ret = *s;
-            int i = search_last_quote(s, es, *s) + 1;
+            int i = search_last_quote(s, es, *s);
             s++;
             while (*s && !ft_strchr(SYMBOL, *s) && i-- > 0)
                 s++;
