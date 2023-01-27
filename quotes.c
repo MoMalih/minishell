@@ -195,6 +195,7 @@ void    search_exp(char *cmd, t_exec_c *ecmd, t_envlist *list, int mark)
     int it;
     int it_e;
     int it_s;
+    int it_v;
     int len;
     char *env_var;
     char *var;
@@ -218,37 +219,24 @@ void    search_exp(char *cmd, t_exec_c *ecmd, t_envlist *list, int mark)
             printf("VAR_QUO >> [%s]\n", var);
             printf("VAR_ENV >> [%s]\n", env_var);
             // if (var)
-            if(cmd[it_e] == '$' && validate(cmd))
-            {
-
-                it_e--;
-                printf(">>>>[%s]\n", cmd);
-                while(cmd[it])
-                {
-                    if(it == it_s)
-                    {
-                        cmd[it] = *ft_strjoin(var, &cmd[len]);
-                        break;
-                    }   
-                    it++;
-                }
-            }
-
-            // it = -1;
-            // while(ecmd->args[it_s] && var[it])
+            // if(cmd[it_e] == '$' && validate(cmd))
             // {
-            //     if(it_s <= it_e)
+
+            //     it_e--;
+            //     printf(">>>>[%s]\n", cmd);
+            //     while(cmd[it])
             //     {
-            //         ecmd->args[mark][it_s] = var[++it];
+            //         if(it == it_s)
+            //         {
+            //             it_v = 0;
+            //             while(var[it_v] && it_v < ft_strlen(var))
+            //                 cmd[it_s++] = var[it_v++];
+            //             break;
+            //         }   
+            //         it++;
             //     }
-            //     else
-            //         ecmd->args[mark][it_s] = ecmd->args[mark][it_e];
-            //     it_s++;
-            //     it_e++;
+            //     // while()
             // }
-            // printf("EXPANSION [%s]\n", ecmd->args[mark]);
-            // if(ecmd->expand[mark] == true)
-            //     search_exp(&cmd[it_e], ecmd, list, mark);
 
         }
         it_e++;
