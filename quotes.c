@@ -104,25 +104,24 @@ char    *find_env(char *name, t_envlist *list)
     return NULL;
 }
 
-int validate(char *cmd)
+int validate(char *cmd, int *single_count, int *double_count)
 {
     int it;
-    int single_count;
-    int double_count;
     int up;
 
     it = 0;
     up = 0;
-    single_count = 0;
-    double_count = 0;
+    printf("SINGLE ::[%d]\n", *single_count);
+    printf("DOUBLE ::[%d]\n", *double_count);
     while(cmd[it] && it < ft_strlen(cmd))
     {
-        if(cmd[it] == '\"' && single_count == 0)
+        if(cmd[it] == '\"' && *single_count == 0)
             up++;
-        count_quotes(cmd[it], &single_count, &double_count);
-        if(single_count == 1 && double_count == 0)
+        if(*single_count == 1 && *double_count == 0)
             return (0);
-        else if(single_count == 1 && double_count == 1 && up == 0)
+        else if(*single_count == 1 && *double_count == 1 && up == 0)
+            return (0);
+        else if (*single_count <= 2 && *single_count % 2 != 0)
             return (0);
         else
             return (1);
@@ -161,27 +160,27 @@ char *trim_quotes(const char *s, size_t len)
     return strdup(s);
 }
 
-int get_var(char *str, int s, int len)
-{
-    ;
-}
+// int get_var(char *str, int s, int len)
+// {
+//     ;
+// }
 
 char    *inner_quotes(char *s, char *needle)
 {
     // int it;
     // int it2;
     size_t  s_len;
-    char *new_s;
+    // char *new_s;
 
-    // it = 0;
-    s_len = 0;
-    // printf(">>S :: [%s]\n", s);
-    if (new_s = ft_strnstr(s, needle, ft_strlen(s)) - 2);
-    {
-        printf("NEW_S :: [%s]\n", new_s);
-        new_s = trim_quotes(new_s, get_var(new_s, 0, ft_strlen(needle)));
-        new_s = ft_strjoin()
-    }
+    // // it = 0;
+    // s_len = 0;
+    // // printf(">>S :: [%s]\n", s);
+    // if (new_s = ft_strnstr(s, needle, ft_strlen(s)) - 2);
+    // {
+    //     printf("NEW_S :: [%s]\n", new_s);
+    //     new_s = trim_quotes(new_s, get_var(new_s, 0, ft_strlen(needle)));
+    //     new_s = ft_strjoin()
+    // }
     return(ft_strdup(s));
 
 }
@@ -192,6 +191,8 @@ void    search_exp(char **cmd, t_envlist *list)
     int it_e;
     int it_s;
     int it_v;
+    int single_count = 0;
+    int double_count = 0;
     int len;
     char *env_var;
     char *var;
@@ -205,7 +206,8 @@ void    search_exp(char **cmd, t_envlist *list)
         {
             var = NULL;
             len = 0;
-            if(cmd[it][it_e] == '$' && validate(cmd[it]))
+            count_quotes(cmd[it][it_e], &single_count, &double_count);
+            if(cmd[it][it_e] == '$' && validate(cmd[it], &single_count, &double_count))
             {
                 it_s = it_e + 1;
                 while(is_alpha_num(cmd[it][++it_e]) && it_e < ft_strlen(cmd[it]))
