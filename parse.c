@@ -5,7 +5,7 @@ t_cmd   *parseredirs(t_cmd *o_cmd, char **ptr, char *end_ptr)
 	int tok;
 	char *cmd;
 	char *end_cmd;
-
+	t_exec_c *exec_c;
 	// tok = 0;
 	// printf("##### DIRS >> \n");
 	while(jump(ptr, end_ptr, "<>"))
@@ -35,7 +35,9 @@ t_cmd   *parseredirs(t_cmd *o_cmd, char **ptr, char *end_ptr)
 			else if(tok == 'H' && tok)
 			{
 				// HEREDOC REDIR
-				o_cmd = redir_c(o_cmd, cmd, end_cmd, 0, -1);     
+				o_cmd = redir_c(o_cmd, cmd, end_cmd, 0, -1);
+				exec_c = (t_exec_c *)o_cmd;
+				here_doc(exec_c->args ,cmd);  
 				break;
 			}
 		}
@@ -65,20 +67,20 @@ t_cmd  *parseblock(char **ptr, char *end_ptr)
 	return (cmd);
 }
 
-void trim_quote(char **cmd, char **end_cmd, char mark)
-{
-	char	*start;
+// void trim_quote(char **cmd, char **end_cmd, char mark)
+// {
+// 	char	*start;
 
-	start = *cmd;
-	if(start < *end_cmd)
-	{
-		if(*start == '\\')
-			start++;
-		else if(*start == mark)
-			*cmd = start + 1;
-		start++;
-	}
-}
+// 	start = *cmd;
+// 	if(start < *end_cmd)
+// 	{
+// 		if(*start == '\\')
+// 			start++;
+// 		else if(*start == mark)
+// 			*cmd = start + 1;
+// 		start++;
+// 	}
+// }
 
 
 t_cmd   *parseexec(char **ptr, char *end_ptr)
@@ -105,8 +107,9 @@ t_cmd   *parseexec(char **ptr, char *end_ptr)
 		if((tok = init_token(ptr, end_ptr, &cmd, &end_cmd)) == 0)
 			break;	
 		// printf(">>[%c]\n", cmd[0]);
-		if(tok == 34 || tok == 39 || tok == 92)
-			trim_quote(&cmd, &end_cmd, cmd[0]);
+		// if(tok == 34 || tok == 39 || tok == 92)
+			// search_exp(cmd , ecmd, );
+		// 	trim_quote(&cmd, &end_cmd, cmd[0]);
 			// continue;
 		// else if(tok != 'a')
 		// 	terminated("syntax");
@@ -178,8 +181,8 @@ t_cmd   *parsecmd(char *buf, t_envlist *envlist)
         printf("l_ovrs: [%s]\n", buf);
         terminated("syntax\n");
     }
-	quotes_handler(cmd, envlist);
     n_term(cmd);
+	quotes_handler(cmd, envlist);
 	// printf("###	## CMD %d>> \n", cmd->id);
     return cmd; 
 }

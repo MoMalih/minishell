@@ -1,52 +1,45 @@
 #include "minishell.h"
-// void update(char *str, char *end_str)
+
+// int parse_quotes(char *input)
 // {
+//     int single_count = 0;
+//     int double_count = 0;
+//     int mark = 0;
 //     int i;
 
 //     i = 0;
-//     while (str[i] && i < ft_strlen(str))
+//     while (i < strlen(input) && !ft_strchr(SYMBOL, input[i])) 
 //     {
-//         end_str[i] = 0;
+//         // printf("input[%d]: {%c}\n", i, input[i]);
+//         if(input[i] == '\'' || input[i] == '\"')
+//             mark = input[i];
+//         else if (input[i] == '\'')
+//         {
+//             if (single_count == 0)
+//                 single_count++;
+//             else
+//                 single_count--;
+//         }
+//         else if (input[i] == '\"')
+//         {
+//             if (double_count == 0)
+//                 double_count++;
+//             else
+//                 double_count--;
+//         }
+//         else if (input[i] == '\\')
+//             i++;
+//         // else if (single_count == 0 && double_count == 0)
+//         //     process the character as a command
 //         i++;
 //     }
-//     end_str[i] = '\0';
+//     if(input[--i] != mark)
+//         terminated("Error: Unclosed quotes\n");
+//     // printf("single_count: {%d}, double_count: {%d}\n", single_count, double_count);
+//     // if (single_count != 0 || double_count != 0)
+//     //     terminated("Error: Unclosed quotes\n");
+//     return 1;
 // }
-
-int parse_quotes(char *input)
-{
-    int single_count = 0;
-    int double_count = 0;
-    int i;
-
-    i = 0;
-    while (i < strlen(input)) 
-    {
-        // printf("input[%d]: {%c}\n", i, input[i]);
-        if (input[i] == '\'')
-        {
-            if (single_count == 0)
-                single_count++;
-            else
-                single_count--;
-        }
-        else if (input[i] == '\"')
-        {
-            if (double_count == 0)
-                double_count++;
-            else
-                double_count--;
-        }
-        else if (input[i] == '\\')
-            i++;
-        // else if (single_count == 0 && double_count == 0)
-            // process the character as a command
-        i++;
-    }
-    // printf("single_count: {%d}, double_count: {%d}\n", single_count, double_count);
-    if (single_count != 0 || double_count != 0)
-        terminated("Error: Unclosed quotes\n");
-    return 1;
-}
 
 // delete the quotes leaving everything inside
 
@@ -73,49 +66,8 @@ int parse_quotes(char *input)
 //     return new_str;
 // }
 
-
-// t_bool    to_expand(char *str ,char quote)
-// {
-//     int it;
-
-//     it = 0;
-//     if(quote == 's')
-//     {
-//         while(str[it])
-//         {
-//             if(str[it] == '\"')
-//             {
-//                 to_expand(&str[it], 'c');
-//                 // trim(&str[it], '\"');
-//             }
-//             it++;
-//         }
-//         return (false);
-//     }
-//     else if (quote == 'd')
-//     {
-//         while(str[it])
-//         {
-//             if(str[it] == '$')
-//                 return(true);
-//             it++;
-//         }
-//     }
-//     else if (quote == 'c')
-//     {
-//         while(str[it])
-//         {
-//             if(str[it] == '$')
-//                 return(true);
-//             it++;
-//         }
-//     }
-//     return (false);
-// }
-
 int is_alpha_num(int c)
 {
-    // printf("zzzzzzzzzz\n");
     if ((c >= '0' && c <= '9')
         || (c >= 'a' && c <= 'z')
         || (c >= 'A' && c <= 'Z')
@@ -126,20 +78,13 @@ int is_alpha_num(int c)
 
 void    count_quotes(char cmd, int *single_count, int *double_count)
 {
-    // int it;
-
-    // it = 0;
-    // while(cmd[it] && it < ft_strlen(cmd))
-    // {
-
-        if(cmd)
-        {
-            if(cmd == '\'')
-                *single_count += 1;
-            else if(cmd == '\"')
-                *double_count += 1;
-        }
-    // }
+    if(cmd)
+    {
+        if(cmd == '\'')
+            *single_count += 1;
+        else if(cmd == '\"')
+            *double_count += 1;
+    }
 }
 
 char    *find_env(char *name, t_envlist *list)
@@ -177,20 +122,71 @@ int validate(char *cmd)
         count_quotes(cmd[it], &single_count, &double_count);
         if(single_count == 1 && double_count == 0)
             return (0);
-        else if(single_count == 0 && double_count == 1)
-            return (1);
-        else if(single_count == 1 && double_count == 1 && up >= 1)
-            return (1);
         else if(single_count == 1 && double_count == 1 && up == 0)
             return (0);
-        else if(single_count == 0 && double_count == 0)
+        else
             return (1);
         it++;
     }
     return (1);
 }
 
-void    search_exp(char *cmd, t_exec_c *ecmd, t_envlist *list, int mark)
+char *replace_str(char *str, char *orig, char *rep)
+{
+    char *buf;
+    
+    buf = NULL;
+    
+        if((buf = ft_strnstr(str, orig , ft_strlen(str)) - 1))
+        {
+            buf = ft_strjoin(ft_substr(str, 0, buf - str), rep);
+            str = ft_strnstr(str, orig , ft_strlen(str)) + ft_strlen(orig);
+            str = ft_strjoin(buf, str);
+        }
+    return (str);
+}
+
+
+char *trim_quotes(const char *s, size_t len)
+{
+    char *new_s;
+
+    if (len >= 2 && (s[0] == '\"' && s[len - 1] == '\"'))
+    {
+        new_s = malloc(len - 1);
+        ft_strlcpy(new_s, s + 1, len - 1);
+        new_s[len - 2] = '\0';
+        return new_s;
+    }
+    return strdup(s);
+}
+
+int get_var(char *str, int s, int len)
+{
+    ;
+}
+
+char    *inner_quotes(char *s, char *needle)
+{
+    // int it;
+    // int it2;
+    size_t  s_len;
+    char *new_s;
+
+    // it = 0;
+    s_len = 0;
+    // printf(">>S :: [%s]\n", s);
+    if (new_s = ft_strnstr(s, needle, ft_strlen(s)) - 2);
+    {
+        printf("NEW_S :: [%s]\n", new_s);
+        new_s = trim_quotes(new_s, get_var(new_s, 0, ft_strlen(needle)));
+        new_s = ft_strjoin()
+    }
+    return(ft_strdup(s));
+
+}
+
+void    search_exp(char **cmd, t_envlist *list)
 {
     int it;
     int it_e;
@@ -201,49 +197,35 @@ void    search_exp(char *cmd, t_exec_c *ecmd, t_envlist *list, int mark)
     char *var;
 
     it = 0;
-    it_e = 0;
     it_s = 0;
-    while(cmd[it_e] && it_e < ft_strlen(cmd))
+    while(cmd[it] && it < MAX_ARG)
     {
-        // count_quotes(cmd[it_e], &single_count, &double_count);
-        var = NULL;
-        len = 0;
-        if(cmd[it_e] == '$' && validate(cmd))
+        it_e = 0;
+        while(cmd[it][it_e] && it_e < ft_strlen(cmd[it]))
         {
-            it_s = it_e + 1;
-            while(is_alpha_num(cmd[++it_e]) && it_e < ft_strlen(cmd))
-                len++;
-            // printf("STR_QUO >> [%s]\n", ft_substr(cmd, it_s, len));
-            env_var = ft_substr(cmd, it_s, len);
-            var = find_env(env_var, list);
-            printf("VAR_QUO >> [%s]\n", var);
-            printf("VAR_ENV >> [%s]\n", env_var);
-            // if (var)
-            // if(cmd[it_e] == '$' && validate(cmd))
-            // {
-
-            //     it_e--;
-            //     printf(">>>>[%s]\n", cmd);
-            //     while(cmd[it])
-            //     {
-            //         if(it == it_s)
-            //         {
-            //             it_v = 0;
-            //             while(var[it_v] && it_v < ft_strlen(var))
-            //                 cmd[it_s++] = var[it_v++];
-            //             break;
-            //         }   
-            //         it++;
-            //     }
-            //     // while()
-            // }
-
+            var = NULL;
+            len = 0;
+            if(cmd[it][it_e] == '$' && validate(cmd[it]))
+            {
+                it_s = it_e + 1;
+                while(is_alpha_num(cmd[it][++it_e]) && it_e < ft_strlen(cmd[it]))
+                    len++;
+                env_var = ft_substr(cmd[it], it_s, len);
+                var = find_env(env_var, list);
+                if(var)
+                {
+                    inner_quotes(cmd[it], env_var);
+                    cmd[it] = replace_str(&(*cmd[it]), env_var, var);
+                    // printf("ENV_VAR :: [%s]\n", env_var);
+                    cmd[it] = trim_quotes(cmd[it], ft_strlen(cmd[it]));
+                }
+                if(cmd[it][it_e] == '\0')
+                    break;
+            }
+            it_e++;
         }
-        it_e++;
+        it++;
     }
-    // if(ecmd->expand[mark] == true)
-    //         search_exp(&cmd[it_e], ecmd, list, mark);
-    // return (false);
 }
 
 void    quotes_handler(t_cmd *cmd, t_envlist *envlist)
@@ -263,28 +245,14 @@ void    quotes_handler(t_cmd *cmd, t_envlist *envlist)
         {
             it = 0;
             ecmd = (t_exec_c *)cmd;
-            // if(parse_quotes(ecmd->args[it]))
-            // {
-                while (ecmd->args[it] != NULL)
-                {
-                    search_exp(ecmd->args[it], ecmd, envlist, it);
-                    // printf("CMD_>> [%s]\n", ecmd->args[it]);
-                    // if(ecmd->expand[it])
-                        // my_strstr(ecmd->args[it], "$");
-                    it++;
-                }    
-            // }
+            search_exp(ecmd->args, envlist);
         }
         else if(cmd->id == REDIR_ID)
         {
             rcmd = (t_redir_c *)cmd;
-            if (parse_quotes(rcmd->file))
-            {
-                // rcmd->expand = search_exp(rcmd->file, rcmd, envlist);
-                // printf("EXPANSION [%d]\n", rcmd->expand);
-            } 
+            search_exp(&rcmd->file, envlist);
         }
-        else if(cmd->id == PIPE_ID || cmd->id == LIST_ID)
+        else if(cmd->id == PIPE_ID)
         {
             pcmd = (t_pipe_c *)cmd;
             quotes_handler(pcmd->left, envlist);
@@ -298,7 +266,3 @@ void    quotes_handler(t_cmd *cmd, t_envlist *envlist)
 
     }
 }
-
-
-
-
