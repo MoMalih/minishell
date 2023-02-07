@@ -1,45 +1,25 @@
 #include "minishell.h"
 
-// int parse_quotes(char *input)
-// {
-//     int single_count = 0;
-//     int double_count = 0;
-//     int mark = 0;
-//     int i;
+// check if quotes are closed
+int parse_quotes(char *input)
+{
+    int len;
 
-//     i = 0;
-//     while (i < strlen(input) && !ft_strchr(SYMBOL, input[i])) 
-//     {
-//         // printf("input[%d]: {%c}\n", i, input[i]);
-//         if(input[i] == '\'' || input[i] == '\"')
-//             mark = input[i];
-//         else if (input[i] == '\'')
-//         {
-//             if (single_count == 0)
-//                 single_count++;
-//             else
-//                 single_count--;
-//         }
-//         else if (input[i] == '\"')
-//         {
-//             if (double_count == 0)
-//                 double_count++;
-//             else
-//                 double_count--;
-//         }
-//         else if (input[i] == '\\')
-//             i++;
-//         // else if (single_count == 0 && double_count == 0)
-//         //     process the character as a command
-//         i++;
-//     }
-//     if(input[--i] != mark)
-//         terminated("Error: Unclosed quotes\n");
-//     // printf("single_count: {%d}, double_count: {%d}\n", single_count, double_count);
-//     // if (single_count != 0 || double_count != 0)
-//     //     terminated("Error: Unclosed quotes\n");
-//     return 1;
-// }
+    len = ft_strlen(input);
+    // printf("input   :: [%s]\n", input);
+    // printf("input:1: [%c]\n", input[0]);
+    // printf("input:2: [%c]\n", input[len - 1]);
+    if(input[0] == '\'' || input[0] == '\"')
+    {
+        if (input[0] == '\'' && input[len - 1] == '\'')
+            return 1;
+        else if (input[0] == '\"' && input[len - 1] == '\"')
+            return 1;
+        else
+            return 0;
+    }
+    return 1;
+}
 
 // delete the quotes leaving everything inside
 
@@ -106,46 +86,27 @@ char    *find_env(char *name, t_envlist *list)
 
 int validate(char *cmd, int *single_count, int *double_count)
 {
-    int it;
+    int len;
     int up;
 
-    it = 0;
+    len = ft_strlen(cmd);
     up = 0;
-    printf("SINGLE ::[%d]\n", *single_count);
-    printf("DOUBLE ::[%d]\n", *double_count);
-    while(cmd[it] && it < ft_strlen(cmd))
+    if(cmd[0] == '\'' ||cmd[0] == '\'')
     {
-        if(cmd[it] == '\"' && *single_count == 0)
+        // printf("SINGLE ::[%d]\n", *single_count);
+        // printf("DOUBLE ::[%d]\n", *double_count);
+        // printf("CMD ::[%c]\n", cmd[len - 1]);
+        if(cmd[0] == '\'')
             up++;
-        if(*single_count == 1 && *double_count == 0)
+        if(*single_count == 1 && up == 1)
             return (0);
-        else if(*single_count == 1 && *double_count == 1 && up == 0)
+        else if(*single_count % 2 != 0 && up == 1)
             return (0);
-        else if (*single_count <= 2 && *single_count % 2 != 0)
-            return (0);
-        else
-            return (1);
-        it++;
     }
+    // else if (cmd[len - 1] != '\'' || cmd[len - 1] != '\"')
+    //     terminated("Error: Unclosed quotes\n");
     return (1);
 }
-
-char *replace_str(char *str, char *orig, char *rep)
-{
-    char *buf;
-    
-    buf = NULL;
-    
-        if((buf = ft_strnstr(str, orig , ft_strlen(str)) - 1))
-        {
-            buf = ft_strjoin(ft_substr(str, 0, buf - str), rep);
-            str = ft_strnstr(str, orig , ft_strlen(str)) + ft_strlen(orig);
-            str = ft_strjoin(buf, str);
-        }
-    return (str);
-}
-
-
 char *trim_quotes(const char *s, size_t len)
 {
     char *new_s;
@@ -157,8 +118,34 @@ char *trim_quotes(const char *s, size_t len)
         new_s[len - 2] = '\0';
         return new_s;
     }
+    else if (len >= 2 && (s[0] == '\'' && s[len - 1] == '\''))
+    {
+        new_s = malloc(len - 1);
+        ft_strlcpy(new_s, s + 1, len - 1);
+        new_s[len - 2] = '\0';
+        return new_s;
+    }
     return strdup(s);
 }
+
+char *replace_str(char *str, char *orig, char *rep)
+{
+    char *buf;
+    int it;
+    
+    buf = NULL;
+    
+    printf("STR :: [%s]\n", str);
+    if((buf = ft_strnstr(str, orig , ft_strlen(str)) - 1))
+    {
+        buf = ft_strjoin(ft_substr(str, 0, buf - str), rep);
+        str = ft_strnstr(str, orig , ft_strlen(str)) + ft_strlen(orig);
+        str = ft_strjoin(buf, str);
+    }
+    return (str);
+}
+
+
 
 // int get_var(char *str, int s, int len)
 // {
@@ -202,6 +189,8 @@ void    search_exp(char **cmd, t_envlist *list)
     while(cmd[it] && it < MAX_ARG)
     {
         it_e = 0;
+        if(parse_quotes(cmd[it]) == 0)
+            terminated("Error: Unclosed quotes\n");
         while(cmd[it][it_e] && it_e < ft_strlen(cmd[it]))
         {
             var = NULL;
@@ -216,10 +205,24 @@ void    search_exp(char **cmd, t_envlist *list)
                 var = find_env(env_var, list);
                 if(var)
                 {
-                    inner_quotes(cmd[it], env_var);
+                    // inner_quotes(cmd[it], env_var);
+                    printf("BUF :: [%s]\n", buf);
+                    while( (*buf) == '\'' || (*buf - 1) == '\"')
+                        buf--;
+                    printf("BUF 22:: [%s]\n", buf);
+                    while(*buf == '\'' || *buf == '\"')
+                    {
+                        buf = trim_quotes(*buf, ft_strlen(buf));
+                        buf++;
+                    }
+                    printf("BUF 33:: [%s]\n", buf);
                     cmd[it] = replace_str(&(*cmd[it]), env_var, var);
                     // printf("ENV_VAR :: [%s]\n", env_var);
+                    while (cmd[it][0] == '\'' && cmd[it][ft_strlen(cmd[it]) - 1] == '\'')
+                        cmd[it] = trim_quotes(cmd[it], ft_strlen(cmd[it]));
                     cmd[it] = trim_quotes(cmd[it], ft_strlen(cmd[it]));
+                    while (cmd[it][0] == '\'' && cmd[it][ft_strlen(cmd[it]) - 1] == '\'')
+                        cmd[it] = trim_quotes(cmd[it], ft_strlen(cmd[it]));
                 }
                 if(cmd[it][it_e] == '\0')
                     break;
@@ -248,6 +251,9 @@ void    quotes_handler(t_cmd *cmd, t_envlist *envlist)
             it = 0;
             ecmd = (t_exec_c *)cmd;
             search_exp(ecmd->args, envlist);
+            // if (parse_quotes(ecmd->args) == 0)
+            // else
+            //     terminated("Error: Unclosed quotes\n");
         }
         else if(cmd->id == REDIR_ID)
         {
