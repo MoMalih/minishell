@@ -184,25 +184,29 @@ char    *inner_quotes(char *s, char *var)
     char    *new_s;
 
     it = 0;
-    s_len = ft_strlen(s);
+    s_len = ft_strlen(s) - 1;
     v_len = ft_strlen(var);
     printf(">>VAR :: [%s]\n", var);
     // if()
     if((new_s = ft_strnstr(s , var, s_len)) && new_s)
     {
         // if
-        printf("NEW_S :: [%s]\n", new_s);
-        printf(">>S :: [%c]\n", *new_s - 1);
-        while ((*new_s - 1) == '\"' || (*new_s - 1) == '\'' ||  (*new_s - 1) == '\\')
+        printf("SS1 :: [%c]\n", new_s[s_len]);
+        // while(new_s[s_len] == '\"')
+        // {
             new_s--;
+            // s_len++;
+        // }
+        printf(">>S :: [%s]\n", new_s);
+        while ((*new_s - 1) == '\"' || (*new_s - 1) == '\'' ||  (*new_s - 1) == '\\')
         // new_s--;
-        while (*new_s == '\"' && new_s[s_len - 1] == '\"')
-            new_s = trim_quotes(new_s, s_len);
+        // while (*new_s == '\"' && new_s[s_len - 1] == '\"')
+        //     new_s = trim_quotes(new_s, s_len);
             // new_s = ft_strjoin()
         // }
     }
-        
     return(ft_strdup(s));
+        
 
 }
 
