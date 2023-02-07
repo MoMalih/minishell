@@ -1,6 +1,34 @@
 #include "minishell.h"
 
 // check if quotes are closed
+
+int check_unclosed(char *arg)
+{
+    int singleQuote;
+    int doubleQuote;
+    int it;
+
+    singleQuote = 0;
+    doubleQuote = 0;
+    it = 0;
+    while(arg[it])
+    {
+        if(arg[it] == '\"' || arg[it] == '\'')
+        {
+            if(arg[it] == '\"' && doubleQuote == 0)
+                doubleQuote++;
+            else if (arg[it] == '\"' && doubleQuote == 1)
+                doubleQuote--;
+        }
+        it++;
+    }
+    if(doubleQuote == 0)
+        return 1;
+    else
+        terminated("UNCLOSED_QUOTES");
+    return 0;
+}
+
 int parse_quotes(char *input)
 {
     int len;
@@ -91,7 +119,7 @@ int validate(char *cmd, int *single_count, int *double_count)
 
     len = ft_strlen(cmd);
     up = 0;
-    if(cmd[0] == '\'' ||cmd[0] == '\'')
+    if(cmd[0] == '\'' ||cmd[len -1] == '\'')
     {
         // printf("SINGLE ::[%d]\n", *single_count);
         // printf("DOUBLE ::[%d]\n", *double_count);
@@ -102,11 +130,15 @@ int validate(char *cmd, int *single_count, int *double_count)
             return (0);
         else if(*single_count % 2 != 0 && up == 1)
             return (0);
+        // else if ()
+        //     return (0);
     }
     // else if (cmd[len - 1] != '\'' || cmd[len - 1] != '\"')
     //     terminated("Error: Unclosed quotes\n");
     return (1);
 }
+
+
 char *trim_quotes(const char *s, size_t len)
 {
     char *new_s;
@@ -135,7 +167,6 @@ char *replace_str(char *str, char *orig, char *rep)
     
     buf = NULL;
     
-    printf("STR :: [%s]\n", str);
     if((buf = ft_strnstr(str, orig , ft_strlen(str)) - 1))
     {
         buf = ft_strjoin(ft_substr(str, 0, buf - str), rep);
@@ -145,29 +176,32 @@ char *replace_str(char *str, char *orig, char *rep)
     return (str);
 }
 
-
-
-// int get_var(char *str, int s, int len)
-// {
-//     ;
-// }
-
-char    *inner_quotes(char *s, char *needle)
+char    *inner_quotes(char *s, char *var)
 {
-    // int it;
-    // int it2;
+    int     it;
     size_t  s_len;
-    // char *new_s;
+    size_t  v_len;
+    char    *new_s;
 
-    // // it = 0;
-    // s_len = 0;
-    // // printf(">>S :: [%s]\n", s);
-    // if (new_s = ft_strnstr(s, needle, ft_strlen(s)) - 2);
-    // {
-    //     printf("NEW_S :: [%s]\n", new_s);
-    //     new_s = trim_quotes(new_s, get_var(new_s, 0, ft_strlen(needle)));
-    //     new_s = ft_strjoin()
-    // }
+    it = 0;
+    s_len = ft_strlen(s);
+    v_len = ft_strlen(var);
+    printf(">>VAR :: [%s]\n", var);
+    // if()
+    if((new_s = ft_strnstr(s , var, s_len)) && new_s)
+    {
+        // if
+        printf("NEW_S :: [%s]\n", new_s);
+        printf(">>S :: [%c]\n", *new_s - 1);
+        while ((*new_s - 1) == '\"' || (*new_s - 1) == '\'' ||  (*new_s - 1) == '\\')
+            new_s--;
+        // new_s--;
+        while (*new_s == '\"' && new_s[s_len - 1] == '\"')
+            new_s = trim_quotes(new_s, s_len);
+            // new_s = ft_strjoin()
+        // }
+    }
+        
     return(ft_strdup(s));
 
 }
@@ -196,7 +230,7 @@ void    search_exp(char **cmd, t_envlist *list)
             var = NULL;
             len = 0;
             count_quotes(cmd[it][it_e], &single_count, &double_count);
-            if(cmd[it][it_e] == '$' && validate(cmd[it], &single_count, &double_count))
+            if(cmd[it][it_e] == '$' && validate(cmd[it], &single_count, &double_count) && check_unclosed(cmd[it]))
             {
                 it_s = it_e + 1;
                 while(is_alpha_num(cmd[it][++it_e]) && it_e < ft_strlen(cmd[it]))
@@ -205,24 +239,16 @@ void    search_exp(char **cmd, t_envlist *list)
                 var = find_env(env_var, list);
                 if(var)
                 {
-                    // inner_quotes(cmd[it], env_var);
-                    printf("BUF :: [%s]\n", buf);
-                    while( (*buf) == '\'' || (*buf - 1) == '\"')
-                        buf--;
-                    printf("BUF 22:: [%s]\n", buf);
-                    while(*buf == '\'' || *buf == '\"')
-                    {
-                        buf = trim_quotes(*buf, ft_strlen(buf));
-                        buf++;
-                    }
-                    printf("BUF 33:: [%s]\n", buf);
                     cmd[it] = replace_str(&(*cmd[it]), env_var, var);
-                    // printf("ENV_VAR :: [%s]\n", env_var);
+
                     while (cmd[it][0] == '\'' && cmd[it][ft_strlen(cmd[it]) - 1] == '\'')
                         cmd[it] = trim_quotes(cmd[it], ft_strlen(cmd[it]));
-                    cmd[it] = trim_quotes(cmd[it], ft_strlen(cmd[it]));
-                    while (cmd[it][0] == '\'' && cmd[it][ft_strlen(cmd[it]) - 1] == '\'')
+                    // cmd[it] = trim_quotes(cmd[it], ft_strlen(cmd[it]));
+                    while (cmd[it][0] == '\"' && cmd[it][ft_strlen(cmd[it]) - 1] == '\"')
                         cmd[it] = trim_quotes(cmd[it], ft_strlen(cmd[it]));
+                    // printf("CMD :: [%s]\n", cmd[it]);
+                    // printf("VAR :: [%s]\n", var);
+                    inner_quotes(cmd[it], var);
                 }
                 if(cmd[it][it_e] == '\0')
                     break;
