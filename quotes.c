@@ -116,9 +116,14 @@ int validate(char *cmd, int *single_count, int *double_count)
 {
     int len;
     int up;
+    int it;
 
+    it = 0;
+    while(cmd[it - 1] == '\"' || cmd[it - 1] == '\'')
+        cmd --;
     len = ft_strlen(cmd);
     up = 0;
+    // printf("CMD :: [%s]\n", cmd);
     if(cmd[0] == '\'' ||cmd[len -1] == '\'')
     {
         // printf("SINGLE ::[%d]\n", *single_count);
@@ -186,24 +191,13 @@ char    *inner_quotes(char *s, char *var)
     it = 0;
     s_len = ft_strlen(s) - 1;
     v_len = ft_strlen(var);
-    printf(">>VAR :: [%s]\n", var);
+    // printf(">>VAR :: [%s]\n", var);
     // if()
     if((new_s = ft_strnstr(s , var, s_len)) && new_s)
     {
-        // if
-        printf("SS1 :: [%c]\n", new_s[s_len]);
-        // while(new_s[s_len] == '\"')
-        // {
-            new_s--;
-            // s_len++;
-        // }
-        printf(">>S :: [%s]\n", new_s);
-        while ((*new_s - 1) == '\"' || (*new_s - 1) == '\'' ||  (*new_s - 1) == '\\')
-        // new_s--;
-        // while (*new_s == '\"' && new_s[s_len - 1] == '\"')
-        //     new_s = trim_quotes(new_s, s_len);
-            // new_s = ft_strjoin()
-        // }
+        new_s--;
+        printf(">>S0 :: [%s]\n", new_s);
+        printf(">>VAR :: [%s]\n", var);
     }
     return(ft_strdup(s));
         
@@ -227,14 +221,15 @@ void    search_exp(char **cmd, t_envlist *list)
     while(cmd[it] && it < MAX_ARG)
     {
         it_e = 0;
-        if(parse_quotes(cmd[it]) == 0)
+        if(!parse_quotes(cmd[it]))
             terminated("Error: Unclosed quotes\n");
         while(cmd[it][it_e] && it_e < ft_strlen(cmd[it]))
         {
             var = NULL;
             len = 0;
             count_quotes(cmd[it][it_e], &single_count, &double_count);
-            if(cmd[it][it_e] == '$' && validate(cmd[it], &single_count, &double_count) && check_unclosed(cmd[it]))
+            if(cmd[it][it_e] == '$' && validate(&cmd[it][it_e], &single_count, &double_count)
+                 && check_unclosed(cmd[it]))
             {
                 it_s = it_e + 1;
                 while(is_alpha_num(cmd[it][++it_e]) && it_e < ft_strlen(cmd[it]))
@@ -244,15 +239,21 @@ void    search_exp(char **cmd, t_envlist *list)
                 if(var)
                 {
                     cmd[it] = replace_str(&(*cmd[it]), env_var, var);
-
-                    while (cmd[it][0] == '\'' && cmd[it][ft_strlen(cmd[it]) - 1] == '\'')
-                        cmd[it] = trim_quotes(cmd[it], ft_strlen(cmd[it]));
-                    // cmd[it] = trim_quotes(cmd[it], ft_strlen(cmd[it]));
                     while (cmd[it][0] == '\"' && cmd[it][ft_strlen(cmd[it]) - 1] == '\"')
                         cmd[it] = trim_quotes(cmd[it], ft_strlen(cmd[it]));
-                    // printf("CMD :: [%s]\n", cmd[it]);
-                    // printf("VAR :: [%s]\n", var);
+
+                    while (cmd[it][0] == '\'' && cmd[it][1] == '\'' 
+                            &&cmd[it][ft_strlen(cmd[it]) - 1] == '\''
+                            && cmd[it][ft_strlen(cmd[it]) - 2] == '\'')
+                    {
+                        cmd[it] = trim_quotes(cmd[it], ft_strlen(cmd[it]));
+                        cmd[it] = trim_quotes(cmd[it], ft_strlen(cmd[it]));
+                    }
+                    // if(single_count % 2 != 0)
+                    // {
+                    // }
                     inner_quotes(cmd[it], var);
+
                 }
                 if(cmd[it][it_e] == '\0')
                     break;
