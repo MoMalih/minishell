@@ -1,4 +1,6 @@
 #include "sshell.h"
+// #include "../minishell.h"
+
 
 int fork1(void)
 {

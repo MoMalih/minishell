@@ -10,6 +10,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "libft.h"
+// #include "execution/sshell.h"
 
 // define
 
@@ -23,6 +24,11 @@
 #define BACK_ID 5
 // structs
 
+typedef enum s_bool{
+    false,
+    true,
+}   t_bool;
+
 typedef struct s_envlist
 {
 	struct s_envlist	*prev;
@@ -30,12 +36,6 @@ typedef struct s_envlist
 	char			    *content;
 	struct s_envlist	*next;
 }   t_envlist;
-
-
-typedef enum s_bool{
-    false,
-    true,
-}   t_bool;
 
 typedef struct s_cmd
 {
@@ -155,4 +155,7 @@ void    quotes_handler(t_cmd *cmd, t_envlist *env);
 void    count_quotes(char cmd_char, int *single_count, int *double_count);
 int     parse_quotes(char *input);
 char    *here_doc(char *input, char *command);
+// void    runcmd(t_cmd *cmd, t_envlist *env);
+
+
 #endif

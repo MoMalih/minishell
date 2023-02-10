@@ -1,6 +1,9 @@
 #ifndef SSHELL_H
 #define SSHELL_H
 
+// #ifndef MINISHELL_H
+// #define MINISHELL_H
+
 #include "../minishell.h"
 #include <stdbool.h>
 #include <sys/stat.h>

@@ -234,10 +234,13 @@ int main(int ac, char **av, char **env)
         //     continue;
         // }
         if (fork_protected() == 0)
+        {
             cmd = parsecmd(buf, env_inf.envlist);
+            runcmd(cmd, env_inf.envlist);
+        }
         else
             wait(NULL);
-        print_cmd(cmd);
+        // print_cmd(cmd);
     }
     kill(0, SIGTERM);
     exit(1);
