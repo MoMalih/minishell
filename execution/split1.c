@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   split1.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mmalih <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/16 00:10:24 by mmalih            #+#    #+#             */
+/*   Updated: 2023/02/16 00:11:29 by mmalih           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "sshell.h"
 
 static int	wrd_counter(char const *str, char c)
@@ -59,7 +71,10 @@ char	**split1(char const *str, char c)
 	size = wrd_counter(str, c);
 	res = memory_mng(str, c);
 	if (res == NULL)
+	{
+		printf("res is NULL could not allocate memory");
 		return (NULL);
+	}
 	i = 0;
 	str_number = 0;
 	while (str_number < size)
