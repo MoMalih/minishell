@@ -1,50 +1,69 @@
 #include"sshell.h"
 
-int unset(t_env *cmds)
+int unset_builtin(char **args, t_envlist **env)
 {
-    t_exec_c    data;
-    t_envlist   envp;
-    
-    envp = cmds->envlist
-    data = (t_exec_c *)cmds->cmd;
-    if (data->args[2][0] != NULL) {
-        printf(stderr, "too many arguments\n");
-        return 1;
-    }
-    while (envp->next != NULL)
+    t_envlist   *temp;
+    t_envlist   *prev;
+
+    temp = *env;
+    prev = *env;
+    if (args[1] == NULL)
     {
-        if (ft_strncmp(envp->name, data->args[1], strlen(data->args[1])) == 0) 
+        panic("unset: not enough arguments");
+        return (1);
+    }
+    while (temp != NULL)
+    {
+        if (ft_strcmp(temp->name, args[1]) == 0)
         {
-            envp->next = envp->next->next;
-            break;
-        }
-    }
-    return 0;
-}
-
-/*#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
-int main(int argc, char *argv[], char *envp[]) {
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s VARNAME\n", argv[0]);
-        return 1;
-    }
-
-    char *varname = argv[1];
-    int i;
-    for (i = 0; envp[i] != NULL; i++) {
-        if (strncmp(envp[i], varname, strlen(varname)) == 0 && envp[i][strlen(varname)] == '=') {
-            int j;
-            for (j = i; envp[j] != NULL; j++) {
-                envp[j] = envp[j+1];
+            if (temp == *env)
+            {
+                *env = (*env)->next;
             }
-            break;
+            else
+            {
+                prev->next = temp->next;
+            }
+            free(temp->name);
+            free(temp);
+            return (0);
         }
+        prev = temp;
+        temp = temp->next;
     }
-
-    return 0;
+    panic("unset: variable not found");
+    return (1);
 }
-*/
+
+/*int unset_builtin(char **args, t_envlist *env)
+{
+    t_envlist   temp;
+    t_envlist   prev;
+
+    temp = env;
+    prev = env;
+    if (args[1] == 0)
+    {
+        panic("unset: not enough arguments");
+        return (1);
+    }
+    while (temp->next != NULL)
+    {
+        if (ft_strcmp(temp->name, args[1]) == 0)
+        {
+            prev->next = temp->next;
+            free(temp);
+            return (0);
+        }
+        prev = temp;
+        temp = temp->next;
+    }
+    if (ft_strcmp(temp->name, args[1]) == 0)
+    {
+        prev->next = temp->next;
+        free(temp);
+        return (0);
+    }
+    panic("unset: variable not found");
+    return (1);
+}*/

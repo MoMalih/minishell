@@ -1,40 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pwd_bi.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mmalih <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/15 05:41:14 by mmalih            #+#    #+#             */
+/*   Updated: 2023/02/15 05:47:04 by mmalih           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "sshell.h"
 
-int pwd_bi()
+void	pwd_biltin()
 {
-    char cwd[1024];
+	char	cwd[1024];
 
-    if (getcwd(cwd, sizeof(cwd)) != NULL) {
-        printf("%s\n", cwd);
-    } else {
-        perror("getcwd() error");
-        return 1;
-    }
-    return 0;
+	if (getcwd(cwd, sizeof(cwd)) != NULL)
+		printf("%s\n", cwd);
+	else
+		panic("getcwd() error");
 }
-
-//int pwd_bi(t_env *data)
-//{
-//    char buf[PATH_MAX];
-//    char    *cwd;
-//
-//    if (data->working_dir)
-//    {
-//        printf("%s\n", data->working_dir);
-//        return (EXIT_SUCCESS);
-//    }
-//    cwd = getcwd(buf, PATH_MAX);
-//    if (cwd)
-//    {
-//        printf("%s\n", buf);
-//        return (EXIT_SUCCESS);
-//    }
-//    perror("pwd");
-//    return (EXIT_FAILURE);
-//}
-
-//int main()
-//{
-//	pwd_bi();
-//	return 0;
-//}

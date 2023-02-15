@@ -1,22 +1,59 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit_bi.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mmalih <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/16 00:03:38 by mmalih            #+#    #+#             */
+/*   Updated: 2023/02/16 00:08:31 by mmalih           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "sshell.h"
 
-static bool is_alone(t_env *data)
+int	exit_builtin(char **args, t_envlist *env)
 {
-    t_cmd *cmd;
+	int		exit_code;
+	bool	error;
 
-    cmd = data->cmd;
-    if (!cmd)
-        return (false);
-    if (cmd->next != NULL || cmd->prev != NULL)
-        return (true);
-    return (false);
+	error = false;
+	if (!args || !args[1])
+		exit_code = 0;
+	else
+	{
+		exit_code = get_exit_code(args[1], &error);
+		if (error)
+		{
+			printf("exit: %s: numeric argument required\n", args[1]);
+			return (1);
+		}
+		else if (args[2])
+		{
+			printf("exit: too many arguments\n");
+			return (1);
+		}
+	}
+	exit(exit_code);
+	return (0);
 }
 
-
-int exit_bi(t_env *data, char **args)
+int	get_exit_code(char *arg, bool *error)
 {
-    int exit_code;
-    bool    alone;
+	int	i;
+	int	exit_code;
 
-    alone = is_alone(data);
+	i = 0;
+	exit_code = 0;
+	while (arg[i])
+	{
+		if (!ft_isdigit(arg[i]))
+		{
+			*error = true;
+			return (0);
+		}
+		exit_code = exit_code * 10 + (arg[i] - '0');
+		i++;
+	}
+	return (exit_code);
 }
