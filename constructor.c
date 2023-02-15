@@ -1,14 +1,5 @@
 #include "minishell.h"
 
-// t_cmd *new_cmd(char **args, char *redir, char *file, struct s_cmd *next)
-// {
-//     t_cmd *cmd;
-
-//     cmd = (t_cmd *)malloc(sizeof(t_cmd));
-//     cmd->type = EXEC_ID;
-//     return (cmd);
-// }
-
 t_cmd *exec_c(void)
 {
     t_exec_c *cmd;
@@ -68,7 +59,7 @@ t_cmd *back_c(t_cmd *backcmd)
 
     if (!(cmd = malloc(sizeof(t_back_c))))
         terminated("error allocation command");
-    // ft_memset(cmd, 0, sizeof(t_cmd *));
+    ft_memset(cmd, 0, sizeof(t_cmd *));
     cmd->id = BACK_ID;
     cmd->cmd = backcmd;
     return ((t_cmd *)cmd);

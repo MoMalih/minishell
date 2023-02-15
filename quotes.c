@@ -53,31 +53,6 @@ int parse_quotes(char *input)
     return 1;
 }
 
-// delete the quotes leaving everything inside
-
-// char *trim_quotes(char *str, int *sgl, int *dbl)
-// {
-//     int i;
-//     int j;
-//     char *new_str;
-
-//     i = 0;
-//     j = 0;
-//     new_str = malloc(sizeof(char) * (strlen(str) - 1));
-//     if (str[i] == '\'' || str[i] == '\"')
-//         i++;
-//     while (str[i])
-//     {
-//         new_str[j] = str[i];
-//         i++;
-//         j++;
-//     }
-//     if (str[i] == '\'' || str[i] == '\"')
-//         i++;
-//     new_str[j] = '\0';
-//     return new_str;
-// }
-
 int is_alpha_num(int c)
 {
     if ((c >= '0' && c <= '9')
@@ -127,15 +102,9 @@ int validate(char *cmd, int *single_count, int *double_count, int flag)
         cmd --;
     len = ft_strlen(cmd);
     up = 0;
-    printf("CMD>>HERE :: [%s]\n", cmd);
     if(cmd[0] == '\'' ||cmd[len -1] == '\'')
     {
-        // printf("CMD ::[%c]\n", cmd[len - 1]);
-        // if(cmd[0] == '\'' && cmd[len - 1] == '\'')
-        //     up++;
-        printf("SINGLE_EXP ::[%d]\n", *single_count);
-        printf("DOUBLE_EXP ::[%d]\n", *double_count);
-        printf("FLAG>>>>>>>>> ::[%d]\n", flag);
+
         if (flag >= 1)
             return (1);
         else if(*single_count == 1)
@@ -143,8 +112,6 @@ int validate(char *cmd, int *single_count, int *double_count, int flag)
         else if(*single_count % 2 != 0)
             return (0);
     }
-    // else if (cmd[len - 1] != '\'' || cmd[len - 1] != '\"')
-    //     terminated("Error: Unclosed quotes\n");
     return (1);
 }
 
@@ -153,10 +120,8 @@ char *trim_quotes(const char *s, size_t len)
 {
     char *new_s;
 
-    // printf("LEN_TRIM :: [%zu]\n", len);
     if (len >= 2 && (s[0] == '\"' && s[len - 1] == '\"'))
     {
-        // printf("S_TRIM :: [%s]\n", new_s);
         new_s = malloc(len - 1);
         ft_strlcpy(new_s, s + 1, len - 1);
         new_s[len - 2] = '\0';
@@ -212,13 +177,8 @@ char    *inner_quotes(char *s, char **var, int   s_len, int *sing, int *dubl)
     v_len = ft_strlen(*var) - 1;
     if (s && var && v_len)
     {
-        // while(*tmp_s != '\"')
-        //     tmp_s++;
-        // s = tmp_s;
         if((new_s = ft_strnstr(s , *var, s_len) - 1) && *dubl)
         {
-            printf("NEW_S_B :: [%c]\n", *new_s);
-            printf("NEW_S_E :: [%c]\n", new_s[v_len + 2]);
             if ((*new_s == '\"') && (new_s[v_len + 2] == '\"'))
             {
                 printf(">>1S :: [%s]\n\n", s);
@@ -226,13 +186,11 @@ char    *inner_quotes(char *s, char **var, int   s_len, int *sing, int *dubl)
                 new_s = ft_strjoin(trim_quotes(new_s , (v_len + 3)), &new_s[v_len + 3]);
                 *dubl -= 1;
                 s = ft_strjoin(s, new_s);
-                printf(">>NEW_S :: [%s]\n\n", s);
             }
             else if ((*new_s == '\'') && (new_s[v_len + 2] == '\''))
             {
                 *var = ft_strjoin("'", *var);
                 *var = ft_strjoin(*var, "'");
-                printf(">>VAR :: [%s]\n\n", *var);
             }
         }
         return (s);
@@ -242,8 +200,6 @@ char    *inner_quotes(char *s, char **var, int   s_len, int *sing, int *dubl)
 
 char *delete_q(char *str, int len , int *sing , int *dubl)
 {
-    // if(sing == 1)
-    //     str = trim_quotes(str, len);
     while((str[0] == '\'' || str[0] == '\"') && len > 2 &&(*sing > 0 || *dubl > 0))
     {
         if (str[0] == '\'' && str[(len - 1)] == '\'')
@@ -251,7 +207,6 @@ char *delete_q(char *str, int len , int *sing , int *dubl)
             *sing -= 1;
             str = trim_quotes(str, len);
             len = ft_strlen(str);
-            // printf(">>STR :: [%s]\n", str);
         }
         else if (str[0] == '\"' && str[(len - 1)] == '\"')
         {
@@ -260,7 +215,6 @@ char *delete_q(char *str, int len , int *sing , int *dubl)
             len = ft_strlen(str);
         }    
     }
-    printf(">>STR :: [%s]\n", str);
     return (str);
 }
 
@@ -304,7 +258,7 @@ void    search_exp(char **cmd, t_envlist *list)
                     // printf(">>CMD :: [%s]\n", &(*cmd[it]));
                     cmd[it] = delete_q(&(*cmd[it]), ft_strlen(cmd[it]), &single_count, &double_count);
                     flag++;
-                    if(cmd[it] && (single_count > 0 || double_count > 0))
+                    if(cmd[it] &&  double_count > 0)
                     {
                         // printf(">>VARS2 :: [%s]\n", var);
                         while (double_count > 0)
@@ -335,38 +289,22 @@ void    quotes_handler(t_cmd *cmd, t_envlist *envlist)
     t_list_c    *lcmd;
     t_pipe_c    *pcmd;
     t_redir_c   *rcmd;
-    int         it;
 
     if(cmd == 0)
         exit(0);
     else
     {
-        if(cmd->id == EXEC_ID)
-        {
-            // it = 0;
-            ecmd = (t_exec_c *)cmd;
+        if(cmd->id == EXEC_ID && (ecmd = (t_exec_c *)cmd))
             search_exp(ecmd->args, envlist);
-            // if (parse_quotes(ecmd->args) == 0)
-            // else
-            //     terminated("Error: Unclosed quotes\n");
-        }
-        else if(cmd->id == REDIR_ID)
-        {
-            rcmd = (t_redir_c *)cmd;
-            // printf(">>FILENSMS<S :: [%s]\n", rcmd->file);
+        else if(cmd->id == REDIR_ID && (rcmd = (t_redir_c *)cmd))
             search_exp(&rcmd->file, envlist);
-        }
         else if(cmd->id == PIPE_ID)
         {
             pcmd = (t_pipe_c *)cmd;
             quotes_handler(pcmd->left, envlist);
             quotes_handler(pcmd->right, envlist);
         }
-        else if(cmd->id == BACK_ID)
-        {
-            bcmd = (t_back_c *)cmd;
+        else if(cmd->id == BACK_ID && (bcmd = (t_back_c *)cmd))
             quotes_handler(bcmd->cmd, envlist);
-        }
-
     }
 }

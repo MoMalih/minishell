@@ -6,17 +6,14 @@ int jump(char **ptr, char *end_ptr, char *mark)
     char *tmp;
 
     tmp = *ptr;
-    // printf("JUMP <<< [%s]\n", tmp);
     while (tmp < end_ptr && ft_strchr(SPACE, *tmp))
         tmp++;
     *ptr = tmp;
-    // printf("JUMP >>>> [%s]\n", tmp);
     return (*tmp && ft_strchr(mark, *tmp));
 }
 
 t_cmd *n_term(t_cmd *cmd)
 {
-    // printf("<<<<<<< NTERM %d>>>>\n", cmd->id);
     if (cmd == 0)
         return 0;
     if (cmd)
@@ -53,7 +50,6 @@ int init_token(char **ps, char *end_s, char **q, char **eq)
     while (s < end_s && ft_strchr(SPACE, *s))
         s++;
     *ps = s;
-    // printf("  TOKEN >>>>>> [%c]\n", (char)ret);
     return ret;
 }
 
@@ -73,15 +69,11 @@ int search_last_quote(char *s, char *es, char mark)
             s++;
         it++;
     }
-    // printf(">>[%d]\n", bow);
     return (bow);
 }
 
 char *switch_token(char *s, char *es, int *ret)
 {
-    // int taf;
-
-    // taf = 0;
     if (*s)
     {
         if (ft_strchr(SYMBOL, *s))
@@ -132,10 +124,9 @@ void print_cmd(t_cmd *cmd)
     t_pipe_c *pcmd;
     t_redir_c *rcmd;
 
-    // cmd = inf->cmd;
     if (cmd == 0)
         exit(0);
-    // cmd = *tmp;
+
     switch (cmd->id)
     {
     default:

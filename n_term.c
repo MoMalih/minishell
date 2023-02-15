@@ -9,7 +9,6 @@ t_cmd *exec(t_cmd *cmd)
     ecmd = (t_exec_c *)cmd;
     while (ecmd->args[i])
     {
-        // printf(">>>>>>>> %s \n", ecmd->args[i]);
         *ecmd->end_args[i] = 0;
         i++;
     }

@@ -34,7 +34,7 @@ install:
 	@cd /Users/zbidouli/goinfre
 	@curl -L http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz --output readline.tar.gz
 	@tar xf readline.tar.gz	
-	@cd readline-master 
+	@tar xf readline.tar.gz
 	@./configure --prefix=/Users/${USER}/goinfre
 	@make
 	@make install

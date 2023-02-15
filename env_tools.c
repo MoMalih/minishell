@@ -62,8 +62,6 @@ void init_env(t_env *env, int ac, char **av, char **env_var)
 	env->env_var = env_var;
 	to_list(env_var, &env->envlist);
 	update_shell(env);
-	// printf("\nInitial##### DONE\n");
-	// env->cmd = NULL;
 	env->cmd_count = 0;
 	env->cwd = getcwd(0, 0);
 	env->exit = 0;
