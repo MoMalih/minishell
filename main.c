@@ -78,7 +78,6 @@ char *switch_token(char *s, char *es, int *ret)
     {
         if (ft_strchr(SYMBOL, *s))
             s++;
-        
         else if (*s == '>')
         {
             s++;
@@ -155,7 +154,7 @@ void print_cmd(t_cmd *cmd)
         printf("FILE >>>>>>>> [%s]\n", rcmd->file);
         // printf(" EXPEND [%d] \n", rcmd->expend);
         printf("FD >>>>>>>> [%d]\n", rcmd->fd);
-        printf("Flag >>>>>>>> [%c]\n", rcmd->op);
+        printf("Flag >>>>>>>> [%c]\n", rcmd->flag);
 
         // fflush(0);
         // if(fork_protected() == 0)
@@ -228,11 +227,11 @@ int main(int ac, char **av, char **env)
         if (fork_protected() == 0)
         {
             cmd = parsecmd(buf, env_inf.envlist);
-            // runcmd(cmd, env_inf.envlist);
+            runcmd(cmd, env_inf.envlist);
         }
         else
             wait(NULL);
-        print_cmd(cmd);
+        // print_cmd(cmd);
     }
     kill(0, SIGTERM);
     exit(1);

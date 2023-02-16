@@ -18,8 +18,10 @@ READLINE = 	-lreadline\
 
 SRC = main.c constructor.c help_func.c parse.c n_term.c signal.c\
 	env_tools.c quotes.c heredoc.c\
-	execution/echo_bi.c    execution/execution.c    execution/pwd_bi.c\
-	execution/split1.c     execution/utils.c
+	execution/echo_bi.c		execution/execution.c    execution/pwd_bi.c\
+	execution/split1.c	execution/utils.c	execution/cd_bi.c\
+	execution/env_bi.c	execution/exit_bi.c\
+	execution/unset_bi.c	execution/export_bi.c
 
 OBJ = $(SRC:.c=.o)
 

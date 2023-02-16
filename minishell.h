@@ -57,7 +57,7 @@ typedef struct s_redir_c
     char    *file;
     char    *efile;
     t_bool  expand;
-    char     op;
+    int     flag;
     int     fd;
 }   t_redir_c;
 
@@ -122,7 +122,7 @@ t_cmd   *parseblock(char **ptr, char *end_ptr);
 t_cmd   *exec_c(void);
 t_cmd   *new_cmd(char **args, char *redir, char *file, struct s_cmd *next);
 void    free_cmd(t_cmd *cmd);
-t_cmd   *redir_c(t_cmd *sub_cmd,char *file, char *efile, char flag, int fd);
+t_cmd   *redir_c(t_cmd *sub_cmd,char *file, char *efile, int flag, int fd);
 t_cmd   *pipe_c(t_cmd *left, t_cmd *right);
 t_cmd   *list_c(t_cmd *left, t_cmd *right);
 t_cmd   *back_c(t_cmd *backcmd);

@@ -274,7 +274,7 @@ void    search_exp(char **cmd, t_envlist *list)
         }
         if(check_unclosed(cmd[it]) && (single_count > 0 || double_count > 0))
         {
-            printf(">>CMD_HEREEE*** :: [%s]\n", &(*cmd[it]));
+            // printf(">>CMD_HEREEE*** :: [%s]\n", &(*cmd[it]));
             cmd[it] = delete_q(&(*cmd[it]), ft_strlen(cmd[it]), &single_count, &double_count);
             break;
         }
@@ -296,8 +296,8 @@ void    quotes_handler(t_cmd *cmd, t_envlist *envlist)
     {
         if(cmd->id == EXEC_ID && (ecmd = (t_exec_c *)cmd))
             search_exp(ecmd->args, envlist);
-        else if(cmd->id == REDIR_ID && (rcmd = (t_redir_c *)cmd))
-            search_exp(&rcmd->file, envlist);
+        // else if(cmd->id == REDIR_ID && (rcmd = (t_redir_c *)cmd))
+            // search_exp(rcmd->file, envlist);
         else if(cmd->id == PIPE_ID)
         {
             pcmd = (t_pipe_c *)cmd;

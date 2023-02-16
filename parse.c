@@ -9,28 +9,27 @@ t_cmd   *parseredirs(t_cmd *o_cmd, char **ptr, char *end_ptr)
 
 	while(jump(ptr, end_ptr, "<>"))
 	{
+		// printf("TOKEN #### >> %d\n", tok);
 		tok = init_token(ptr, end_ptr, 0, 0);
-		printf("TOKEN #### >> %d\n", tok);
 		if(init_token(ptr, end_ptr, &cmd, &end_cmd))
 		{
 			if(tok == '<' && tok)
 			{
-				o_cmd = redir_c(o_cmd, cmd, end_cmd, '<', 0);
+				o_cmd = redir_c(o_cmd, cmd, end_cmd, O_RDONLY, 0);
 				break;
 			}
 			else if (tok =='>' && tok)
 			{
-				o_cmd = redir_c(o_cmd, cmd, end_cmd, '>', 1);
+				o_cmd = redir_c(o_cmd, cmd, end_cmd, O_WRONLY|O_CREAT, 1);
 				break;
 			}
 			else if(tok == '+' && tok)
 			{ 
-				o_cmd = redir_c(o_cmd, cmd, end_cmd, '+', 1);
+				o_cmd = redir_c(o_cmd, cmd, end_cmd, O_APPEND|O_CREAT, 1);
 				break;
 			}
 			else if(tok == 'H' && tok)
 			{
-				// HEREDOC REDIR
 				o_cmd = redir_c(o_cmd, cmd, end_cmd, 'H', -1);
 				exec_c = (t_exec_c *)o_cmd;
 				here_doc(exec_c->args ,cmd);  

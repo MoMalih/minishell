@@ -11,7 +11,7 @@ t_cmd *exec_c(void)
     return ((t_cmd *)cmd);
 }
 
-t_cmd *redir_c(t_cmd *sub_cmd, char *file, char *efile, char flag, int fd)
+t_cmd *redir_c(t_cmd *sub_cmd, char *file, char *efile, int flag, int fd)
 {
     t_redir_c *cmd;
 
@@ -22,7 +22,7 @@ t_cmd *redir_c(t_cmd *sub_cmd, char *file, char *efile, char flag, int fd)
     cmd->cmd = sub_cmd;
     cmd->file = file;
     cmd->efile = efile;
-    cmd->op = flag;
+    cmd->flag = flag;
     cmd->fd = fd;
     return ((t_cmd *)cmd);
 }
