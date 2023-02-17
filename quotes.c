@@ -28,8 +28,7 @@ int check_unclosed(char *arg)
     }
     if(doubleQuote == 0 || singleQuote == 0)
         return 1;
-    else
-        terminated("UNCLOSED_QUOTES");
+    terminated("UNCLOSED_QUOTES");
     return 0;
 }
 
@@ -181,7 +180,7 @@ char    *inner_quotes(char *s, char **var, int   s_len, int *sing, int *dubl)
         {
             if ((*new_s == '\"') && (new_s[v_len + 2] == '\"'))
             {
-                printf(">>1S :: [%s]\n\n", s);
+                // printf(">>1S :: [%s]\n\n", s);
                 s = replace_str(s , (new_s + 1), "\0");
                 new_s = ft_strjoin(trim_quotes(new_s , (v_len + 3)), &new_s[v_len + 3]);
                 *dubl -= 1;

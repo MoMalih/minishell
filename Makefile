@@ -33,10 +33,10 @@ $(NAME): $(OBJ)
 
 install:
 	@echo "Installing dependencies.."
-	@cd /Users/zbidouli/goinfre
+	@cd /Users/zbidouli/goinfree
 	@curl -L http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz --output readline.tar.gz
 	@tar xf readline.tar.gz	
-	@tar xf readline.tar.gz
+	@cd readline-master
 	@./configure --prefix=/Users/${USER}/goinfre
 	@make
 	@make install

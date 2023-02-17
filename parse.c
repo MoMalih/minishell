@@ -76,11 +76,6 @@ t_cmd   *parseexec(char **ptr, char *end_ptr)
 	{
 		if((tok = init_token(ptr, end_ptr, &cmd, &end_cmd)) == 0)
 			break;	
-		// printf(">>[%c]\n", cmd[0]);
-		// if(tok == 34 || tok == 39 || tok == 92)
-			// search_exp(cmd , ecmd, );
-		// 	trim_quote(&cmd, &end_cmd, cmd[0]);
-			// continue;
 		// else if(tok != 'a')
 		// 	terminated("syntax");
 		e_cmd->args[ac] = cmd;
