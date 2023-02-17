@@ -26,15 +26,16 @@ int	exit_builtin(char **args, t_envlist *env)
 		if (error)
 		{
 			printf("exit: %s: numeric argument required\n", args[1]);
-			return (1);
+			exit(1);
 		}
 		else if (args[2])
 		{
 			printf("exit: too many arguments\n");
-			return (1);
+			exit(1);
 		}
 	}
 	exit(exit_code);
+	kill(0, SIGTERM);
 	return (0);
 }
 

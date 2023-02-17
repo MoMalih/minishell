@@ -6,13 +6,13 @@
 /*   By: mmalih <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 05:41:14 by mmalih            #+#    #+#             */
-/*   Updated: 2023/02/15 05:47:04 by mmalih           ###   ########.fr       */
+/*   Updated: 2023/02/17 04:35:41 by mmalih           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sshell.h"
 
-void	pwd_biltin()
+void	pwd_builtin(void)
 {
 	char	cwd[1024];
 

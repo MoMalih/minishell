@@ -55,7 +55,7 @@ void	exec_builtins(char **args, t_envlist *env)
 	else if (strcmp(args[0], "cd") == 0)
 		cd_builtin(args, env);
 	else if (strcmp(args[0], "pwd") == 0)
-		pwd_biltin();
+		pwd_builtin();
 	else if (strcmp(args[0], "export") == 0)
 		export_builtin(args, env);
 	else if (strcmp(args[0], "unset") == 0)

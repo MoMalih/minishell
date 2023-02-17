@@ -1,35 +1,47 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export_bi.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mmalih <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/17 04:37:12 by mmalih            #+#    #+#             */
+/*   Updated: 2023/02/17 04:53:05 by mmalih           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "sshell.h"
 
-int export_builtin(char **args, t_envlist *env)
+int	export_builtin(char **args, t_envlist *env)
 {
-    int         i;
-    char        **tmp;
-    int         ret;
-    t_envlist   *temp;
+	int			i;
+	char		**tmp;
+	int			ret;
+	t_envlist	*temp;
 
-    ret = EXIT_SUCCESS;
-    i = 1;
-    temp = env;
-    if (!args[i])
-    {
-        while(temp->next != NULL)
-        {
-            printf("%s=%s\n", temp->name, temp->content);
-            temp = temp->next;
-        }
-        printf("%s=%s\n", temp->name, temp->content);
-        return (ret);
-    }
-    while (args[i])
-    {
-        if (!is_valid_env_var_key(args[i]))
-        {
-            printf("export: %s: not a valid identifier\n", args[i]);
-            ret = EXIT_FAILURE;
-        }
-        else if (ft_strchr(args[i], '=') != NULL)
-        {
-            tmp = get_key_value_pair(args[i]);
+	ret = EXIT_SUCCESS;
+	i = 1;
+	temp = env;
+	if (!args[i])
+	{
+		while (temp->next != NULL)
+		{
+			printf("%s=%s\n", temp->name, temp->content);
+			temp = temp->next;
+		}
+		printf("%s=%s\n", temp->name, temp->content);
+		return (ret);
+	}
+	while (args[i])
+	{
+		if (!is_valid_env_var_key(args[i]))
+		{
+			printf("export: %s: not a valid identifier\n", args[i]);
+			ret = EXIT_FAILURE;
+		}
+		else if (ft_strchr(args[i], '=') != NULL)
+		{
+			tmp = get_key_value_pair(args[i]);
             set_env_var(&env, tmp[0], tmp[1]);
             free_str_tab(tmp);
         }
@@ -40,15 +52,15 @@ int export_builtin(char **args, t_envlist *env)
 
 void    free_str_tab(char **str)
 {
-    int i;
+	int i;
 
-    i = 0;
-    while (str[i] != NULL)
-    {
-        free(str[i]);
-        i++;
-    }
-    free(str);
+	i = 0;
+	while (str[i] != NULL)
+	{
+		free(str[i]);
+		i++;
+	}
+	free(str);
 }
 
 int set_env_var(t_envlist **env, char *key, char *value)

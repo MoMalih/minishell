@@ -6,7 +6,7 @@
 /*   By: mmalih <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 23:09:38 by mmalih            #+#    #+#             */
-/*   Updated: 2023/02/16 00:02:18 by mmalih           ###   ########.fr       */
+/*   Updated: 2023/02/16 01:32:41 by mmalih           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,9 @@ size_t	strlen1(const char *s)
 char	**env_var(t_envlist *env_list)
 {
 	t_envlist	*curr;
-    char		**envp;
+	char		**envp;
 	int			count;
-    int			i;
+	int			i;
 
 	count = 0;
 	curr = env_list;

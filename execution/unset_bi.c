@@ -7,6 +7,7 @@ int unset_builtin(char **args, t_envlist **env)
 
     temp = *env;
     prev = *env;
+    printf("%s\n",args[1]);
     if (args[1] == NULL)
     {
         panic("unset: not enough arguments");
