@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbidouli <zbidouli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mmalih <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 05:11:33 by mmalih            #+#    #+#             */
-/*   Updated: 2023/02/18 01:06:41 by zbidouli         ###   ########.fr       */
+/*   Updated: 2023/02/15 05:40:58 by mmalih           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	exec_builtins(char **args, t_envlist *env)
 	if (strcmp(args[0], "echo") == 0)
 		echo_builtin(args);
 	else if (strcmp(args[0], "cd") == 0)
-		cd_builtin(args, env);
+		cd_builtin(args, &env);
 	else if (strcmp(args[0], "pwd") == 0)
 		pwd_builtin();
 	else if (strcmp(args[0], "export") == 0)
@@ -109,8 +109,6 @@ void	runcmd(t_cmd *cmd, t_envlist *env)
 			panic("open failed");
 			exit(1);
 		}
-		else
-			
 		runcmd(rcmd->cmd, env);
 	}
 	else if (cmd->id == LIST_ID)
