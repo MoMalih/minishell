@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   help_func.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zbidouli <zbidouli@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/18 00:08:08 by zbidouli          #+#    #+#             */
+/*   Updated: 2023/02/18 00:20:36 by zbidouli         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-int open_file(void)
+int	open_file(void)
 {
-	int fd;
+	int	fd;
 
 	fd = 0;
 	while ((fd = open("console", O_RDWR)) >= 0)
@@ -14,20 +26,20 @@ int open_file(void)
 	return (fd);
 }
 
-int fork_protected(void)
+int	fork_protected(void)
 {
-	int pid;
+	int	pid;
 
 	pid = fork();
 	if (pid == -1)
 		terminated("fork");
-	return pid;
+	return (pid);
 }
 
-void *ft_memset(void *b, int c, size_t len)
+void	*ft_memset(void *b, int c, size_t len)
 {
-	size_t i;
-	char *x;
+	size_t	i;
+	char	*x;
 
 	x = (char *)b;
 	i = 0;
@@ -39,19 +51,19 @@ void *ft_memset(void *b, int c, size_t len)
 	return (b);
 }
 
-void terminated(char *s)
+void	terminated(char *s)
 {
 	if (s)
 	{
 		printf("%s\n", s);
-	    kill(0, SIGTERM);
+		kill(0, SIGTERM);
 	}
 	exit(1);
 }
 
-char *ft_strchr(const char *s, int c)
+char	*ft_strchr(const char *s, int c)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (s[i])
@@ -65,12 +77,12 @@ char *ft_strchr(const char *s, int c)
 	return (0);
 }
 
-char **strstrip(char *str, char c)
+char	**strstrip(char *str, char c)
 {
-	char **arr;
-	int i;
-	int j;
-	int len;
+	char	**arr;
+	int		i;
+	int		j;
+	int		len;
 
 	len = 0;
 	while (str[len] != c && str[len])
@@ -93,10 +105,10 @@ char **strstrip(char *str, char c)
 	return (arr);
 }
 
-void safe_free(void **ptr)
+void	safe_free(void **ptr)
 {
 	if (*ptr == NULL)
-		return;
+		return ;
 	free(*ptr);
 	*ptr = NULL;
 }

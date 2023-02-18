@@ -1,27 +1,30 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signal.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zbidouli <zbidouli@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/17 21:00:03 by zbidouli          #+#    #+#             */
+/*   Updated: 2023/02/18 00:24:25 by zbidouli         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-void	rl_replace_line (text, clear_undo)
-     const char *text;
-     int clear_undo;
+void	rl_replace_line(const char *text,int clear_undo)
 {
-  int len;
+	int			len;
 
-  len = strlen (text);
-//   if (len >= 10000)
-//     rl_extend_line_buffer (len);
-  strcpy (rl_line_buffer, text);
-  rl_end = len;
-
-//   if (clear_undo)
-//     rl_free_undo_list ();
-
-//   _rl_fix_point (1);
+	len = strlen(text);
+	strcpy(rl_line_buffer, text);
+	rl_end = len;
 }
 
-void handle_int(int signo) 
+void	handle_int(int signo)
 {
 	if (signo == SIGINT)
-    {
+	{
 		printf("\n");
 		rl_on_new_line();
 		rl_replace_line("", 0);
@@ -29,7 +32,7 @@ void handle_int(int signo)
 	}
 }
 
-void handle_quit(int sig_code)
+void	handle_quit(int sig_code)
 {
 	if (sig_code == SIGQUIT)
 	{
