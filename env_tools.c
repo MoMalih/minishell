@@ -1,11 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env_tools.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zbidouli <zbidouli@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/18 00:01:53 by zbidouli          #+#    #+#             */
+/*   Updated: 2023/02/18 00:03:18 by zbidouli         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-void update_shell(t_env *env)
+void	update_shell(t_env *env)
 {
-	char *tmp;
+	char	*tmp;
 
 	if (!env->envlist)
-		return;
+		return ;
 	while (env->envlist->next && !ft_strncmp(env->envlist->name, "SHLVL", 5))
 		env->envlist = env->envlist->next;
 	if (ft_strncmp(env->envlist->name, "SHLVL", 5))
@@ -18,32 +30,32 @@ void update_shell(t_env *env)
 		env->envlist = env->envlist->prev;
 }
 
-t_envlist *init_env_node(char *str)
+t_envlist	*init_env_node(char *str)
 {
-	t_envlist *env;
-	char **tmp;
+	t_envlist	*env;
+	char		**tmp;
 
 	env = malloc(sizeof(t_envlist));
 	tmp = strstrip(str, '=');
 	env->name = tmp[0];
-	// printf("name ###########///[ %s]\n", env->name);
 	env->content = tmp[1];
-	// printf("content>>>>>>/// [ %s ]\n", env->content);
 	safe_free((void **)&tmp);
 	return (env);
 }
+	// printf("name ###########///[ %s]\n", env->name);
+	// printf("content>>>>>>/// [ %s ]\n", env->content);
 
-void to_list(char **arr, t_envlist **env_node)
+void	to_list(char **arr, t_envlist **env_node)
 {
-	int i;
-	t_envlist *start;
+	int			i;
+	t_envlist	*start;
 
 	*env_node = init_env_node("?=0");
 	start = *env_node;
 	(*env_node)->prev = 0;
 	(*env_node)->next = 0;
 	if (!arr || !arr[0])
-		return;
+		return ;
 	i = -1;
 	while (arr[++i])
 	{
@@ -55,7 +67,7 @@ void to_list(char **arr, t_envlist **env_node)
 	*env_node = start;
 }
 
-void init_env(t_env *env, int ac, char **av, char **env_var)
+void	init_env(t_env *env, int ac, char **av, char **env_var)
 {
 	(void)ac;
 	(void)av;

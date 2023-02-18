@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmalih <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: zbidouli <zbidouli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 05:11:33 by mmalih            #+#    #+#             */
-/*   Updated: 2023/02/15 05:40:58 by mmalih           ###   ########.fr       */
+/*   Updated: 2023/02/18 01:06:41 by zbidouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,8 @@ void	runcmd(t_cmd *cmd, t_envlist *env)
 			panic("open failed");
 			exit(1);
 		}
+		else
+			
 		runcmd(rcmd->cmd, env);
 	}
 	else if (cmd->id == LIST_ID)
