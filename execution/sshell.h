@@ -19,6 +19,8 @@
 
 #define PATH_MAX    1024
 
+t_envlist	*find_env_variable(char *name, t_envlist **env);
+void	remove_env_variable(t_envlist *var, t_envlist **env);
 int		fork1(void);
 void	panic(char *s);
 int		is_buitin(char *cmd);
@@ -51,5 +53,6 @@ void	free_ptr(void *ptr);
 void    set_env_var_cd(t_envlist **env, char *name, char *value);
 bool ft_isspace(int c);
 char	*ft_strdup1(const char *s1);
+
 
 # endif 

@@ -35,7 +35,7 @@ t_envlist	*find_env_variable(char *name, t_envlist **env)
 {
 	t_envlist	*current;
 
-	current = env;
+	current = *env;
 	while (current != NULL)
 	{
 		if (ft_strcmp(current->name, name) == 0)
@@ -53,7 +53,7 @@ void	remove_env_variable(t_envlist *var, t_envlist **env)
 		*env = (*env)->next;
 	else
 	{
-		current = env;
+		current = *env;
 		while (current != NULL && current->next != var)
 			current = current->next;
 		if (current != NULL)
