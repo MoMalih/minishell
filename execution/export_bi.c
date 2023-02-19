@@ -50,19 +50,6 @@ int	export_builtin(char **args, t_envlist *env)
 	return (ret);
 }
 
-void	free_str_tab(char **str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] != NULL)
-	{
-		free(str[i]);
-		i++;
-	}
-	free(str);
-}
-
 int	set_env_var(t_envlist **env, char *key, char *value)
 {
 	t_envlist	*temp;
@@ -115,37 +102,6 @@ t_envlist	*create_env_node(char *key, char *value)
 	return (node);
 }
 
-/*int set_env_var(t_envlist **env, char *key, char *value)
-{
-    t_envlist   *temp;
-    t_envlist   *prev;
-
-    temp = *env;
-    prev = *env;
-    while (temp != NULL)
-    {
-        if (strcmp(temp->name, key) == 0)
-        {
-            free(temp->content);
-            temp->content = ft_strdup(value);
-            return (0);
-        }
-        prev = temp;
-        temp = temp->next;
-    }
-    temp = (t_envlist*)malloc(sizeof(t_envlist));
-    temp->name = ft_strdup(key);
-    temp->content = ft_strdup(value);
-    temp->next = NULL;
-    if (*env == NULL)
-    {
-        *env = temp;
-        return (0);
-    }
-    prev->next = temp;
-    return (0);
-}*/
-
 char	**get_key_value_pair(char *str)
 {
 	char	**ret;
@@ -173,20 +129,4 @@ char	**get_key_value_pair(char *str)
 	}
 	ret[1][j] = '\0';
 	return (ret);
-}
-
-int	is_valid_env_var_key(char *str)
-{
-	int	i;
-
-	i = 0;
-	if (ft_isdigit(str[i]))
-		return (0);
-	while (str[i])
-	{
-		if (!ft_isalnum(str[i]) && str[i] != '_')
-			return (0);
-		i++;
-	}
-	return (1);
 }

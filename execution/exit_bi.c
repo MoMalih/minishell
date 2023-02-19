@@ -34,8 +34,8 @@ int	exit_builtin(char **args, t_envlist *env)
 			exit(1);
 		}
 	}
-	exit(exit_code);
 	kill(0, SIGTERM);
+	exit(exit_code);
 	return (0);
 }
 

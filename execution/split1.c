@@ -71,10 +71,7 @@ char	**split1(char const *str, char c)
 	size = wrd_counter(str, c);
 	res = memory_mng(str, c);
 	if (res == NULL)
-	{
-		printf("res is NULL could not allocate memory");
-		return (NULL);
-	}
+		panic("res is NULL could not allocate memory");
 	i = 0;
 	str_number = 0;
 	while (str_number < size)
