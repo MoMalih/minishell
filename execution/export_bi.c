@@ -6,38 +6,43 @@
 /*   By: mmalih <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 04:37:12 by mmalih            #+#    #+#             */
-/*   Updated: 2023/02/17 05:41:59 by mmalih           ###   ########.fr       */
+/*   Updated: 2023/02/19 03:57:30 by mmalih           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sshell.h"
 
-int	export_builtin(char **args, t_envlist *env)
+// Helper function to print all environment variables
+void	print_env_vars(t_envlist *env)
 {
-	int			i;
-	char		**tmp;
-	int			ret;
 	t_envlist	*temp;
 
-	ret = EXIT_SUCCESS;
-	i = 1;
 	temp = env;
+	while (temp->next != NULL)
+	{
+		printf("%s=%s\n", temp->name, temp->content);
+		temp = temp->next;
+	}
+	printf("%s=%s\n", temp->name, temp->content);
+}
+
+int	export_builtin(char **args, t_envlist *env)
+{
+	int		i;
+	char	**tmp;
+
+	i = 1;
 	if (!args[i])
 	{
-		while (temp->next != NULL)
-		{
-			printf("%s=%s\n", temp->name, temp->content);
-			temp = temp->next;
-		}
-		printf("%s=%s\n", temp->name, temp->content);
-		return (ret);
+		print_env_vars(env);
+		return (1);
 	}
 	while (args[i])
 	{
 		if (!is_valid_env_var_key(args[i]))
 		{
 			printf("export: %s: not a valid identifier\n", args[i]);
-			ret = EXIT_FAILURE;
+			return (0);
 		}
 		else if (ft_strchr(args[i], '=') != NULL)
 		{
@@ -47,7 +52,7 @@ int	export_builtin(char **args, t_envlist *env)
 		}
 		i++;
 	}
-	return (ret);
+	return (1);
 }
 
 int	set_env_var(t_envlist **env, char *key, char *value)

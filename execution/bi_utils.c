@@ -6,7 +6,7 @@
 /*   By: mmalih <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/19 00:33:27 by mmalih            #+#    #+#             */
-/*   Updated: 2023/02/19 00:33:30 by mmalih           ###   ########.fr       */
+/*   Updated: 2023/02/19 04:15:50 by mmalih           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,14 @@ char	*strjoin1(char const *s1, char const *s2)
 	memcpy1(ret + strlen1(s1), s2, strlen1(s2));
 	ret[sumlen] = 0;
 	return (ret);
+}
+
+void	update_env_var(t_envlist *node, char *value)
+{
+	char	*tmp_str;
+
+	tmp_str = node->content;
+	node->content = ft_strdup(value);
+	if (tmp_str)
+		free(tmp_str);
 }
