@@ -165,5 +165,15 @@ char    *here_doc(char *input, char *command);
 int     set_fd(int flag);
 // void    runcmd(t_cmd *cmd, t_envlist *env);
 
+// QUOTE
+char	*inner_quotes(char *s, char **var, int s_len, int *dubl);
+int	    is_alpha_num(int c);
+char	*find_env(char *name, t_envlist *list);
+char	*replace_str(char *str, char *orig, char *rep);
+int	    check_unclosed(char *arg);
+char	*delete_q(char *str, int len, int *sing, int *dubl);
+int	    validate(char *cmd, int *single_count, int *double_count, int flag);
+char	*delete_quotes(char *cmd, int *single_count, int *double_count);
+char	*trim_quotes(const char *s, size_t len);
 
 #endif
