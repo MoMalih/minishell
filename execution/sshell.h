@@ -6,7 +6,7 @@
 /*   By: mmalih <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 01:24:31 by mmalih            #+#    #+#             */
-/*   Updated: 2023/02/19 04:14:39 by mmalih           ###   ########.fr       */
+/*   Updated: 2023/02/19 12:00:38 by mmalih           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef SSHELL_H
@@ -57,8 +57,13 @@ char		*search_env_var(t_envlist *env, char *str);
 char		*path_finder(char *key, t_envlist *lenv);
 int			is_buitin(char *cmd);
 void		panic(char *s);
+void		two_point(void);
 char		*ft_strcpy(char *dest, char *src);
 void		print_env_vars(t_envlist *env);
 void		update_env_var(t_envlist *node, char *value);
+void		go_to(char *path, t_envlist **env, char **args);
+void		move_path(char *path, t_envlist **env);
+void		go_root(void);
+char		*go_dash(char *path, t_envlist **env);
 
 #endif 

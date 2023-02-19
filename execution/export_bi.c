@@ -12,7 +12,6 @@
 
 #include "sshell.h"
 
-// Helper function to print all environment variables
 void	print_env_vars(t_envlist *env)
 {
 	t_envlist	*temp;
@@ -64,7 +63,7 @@ int	set_env_var(t_envlist **env, char *key, char *value)
 	prev = *env;
 	while (temp != NULL)
 	{
-		if (strcmp(temp->name, key) == 0)
+		if (ft_strcmp(temp->name, key) == 0)
 		{
 			free(temp->content);
 			temp->content = ft_strdup(value);
