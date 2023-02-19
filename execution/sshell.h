@@ -61,9 +61,9 @@ void		two_point(void);
 char		*ft_strcpy(char *dest, char *src);
 void		print_env_vars(t_envlist *env);
 void		update_env_var(t_envlist *node, char *value);
-void		go_to(char *path, t_envlist **env, char **args);
+void		go_to(char **path, t_envlist **env, char **args);
 void		move_path(char *path, t_envlist **env);
 void		go_root(void);
-char		*go_dash(char *path, t_envlist **env);
+void		go_dash(char **path, t_envlist **env);
 
 #endif 

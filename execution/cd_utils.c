@@ -6,7 +6,7 @@
 /*   By: mmalih <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/19 11:11:54 by mmalih            #+#    #+#             */
-/*   Updated: 2023/02/19 12:00:01 by mmalih           ###   ########.fr       */
+/*   Updated: 2023/02/19 12:29:49 by mmalih           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,14 @@ void	two_point(void)
 	}
 }
 
-void	go_to(char *path, t_envlist **env, char **args)
+void	go_to(char **path, t_envlist **env, char **args)
 {
-	path = get_env_var_value(*env, "PWD");
-	path = ft_strjoin(path, "/");
-	path = ft_strjoin(path, args[1]);
+	char	*tmp;
+
+	tmp = *path;
+	tmp = get_env_var_value(*env, "PWD");
+	tmp = ft_strjoin(tmp, "/");
+	tmp = ft_strjoin(tmp, args[1]);
 }
 
 void	go_root(void)
@@ -58,12 +61,12 @@ void	go_root(void)
 		perror("cd");
 }
 
-char	*go_dash(char *path, t_envlist **env)
+void	go_dash(char **path, t_envlist **env)
 {
 	char	*tmp;
 
+	tmp = *path;
 	tmp = get_env_var_value(*env, "OLDPWD");
 	if (!tmp || *tmp == '\0' || ft_isspace(*tmp))
 		panic("OLDPWD not set");
-	return (tmp);
 }
