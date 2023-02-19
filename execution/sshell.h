@@ -22,12 +22,13 @@ int     echo_builtin(char **args);
 int     env_builtin(t_envlist *env, char **args);
 int     exit_builtin(char **args, t_envlist *env);
 int     get_exit_code(char *arg, bool *error);
-int     pwd_builtin();
+void     pwd_builtin();
 int     unset_builtin(char **args, t_envlist **env);
 int     is_valid_env_var_key(char *str);
 char    **get_key_value_pair(char *str);
 int     set_env_var(t_envlist **env, char *key, char *value);
 void    free_str_tab(char **str);
 int     ft_strcmp(char *s1, char *s2);
+int     export_builtin(char **args, t_envlist *env);
 
 #endif 

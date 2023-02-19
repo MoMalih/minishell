@@ -12,7 +12,7 @@
 
 #include "sshell.h"
 
-void	pwd_biltin()
+void	pwd_builtin()
 {
 	char	cwd[1024];
 

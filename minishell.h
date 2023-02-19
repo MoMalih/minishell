@@ -37,6 +37,13 @@ typedef struct s_envlist
 	struct s_envlist	*next;
 }   t_envlist;
 
+typedef struct s_quote
+{
+	int     single_count;
+    int     double_count;
+    int     flag;
+}   t_quote;
+
 typedef struct s_cmd
 {
     int id; 
@@ -142,7 +149,7 @@ char    *switch_token(char *s, char *es, int *ret);
 int     jump(char **ptr, char *end_ptr, char *mark);
 t_cmd   *n_term(t_cmd *cmd);
 void    my_printf(int fd, const char *s, ...);
-
+void	 print_cmd(t_cmd *cmd);
 // signal
 
 void    handle_int(int signo);

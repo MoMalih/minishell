@@ -255,4 +255,3 @@ int	main(int ac, char **av, char **env)
 	exit(1);
 }
 	// fd = open_file();
-		// print_cmd(cmd);

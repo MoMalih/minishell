@@ -23,20 +23,6 @@ int	set_fd(int flag)
 		return (0);
 }
 
-// int	open_file(void)
-// {
-// 	int	fd;
-
-// 	fd = 0;
-// 	while ((fd = open("console", O_RDWR)) >= 0)
-// 	{
-// 		if (fd >= 3)
-// 			close(fd);
-// 		break;
-// 	}
-// 	return (fd);
-// }
-
 int	fork_protected(void)
 {
 	int	pid;

@@ -12,48 +12,53 @@
 
 #include "minishell.h"
 
-int	init_redir(t_cmd *o_cmd, char *cmd, char *end_cmd, int tok)
+t_cmd	*handle_redir_less(t_cmd *o_cmd, char *cmd, char *end_cmd)
+{
+	return (redir_c(o_cmd, cmd, end_cmd, '<'));
+}
+
+t_cmd	*handle_redir_more(t_cmd *o_cmd, char *cmd, char *end_cmd)
+{
+	return (redir_c(o_cmd, cmd, end_cmd, '>'));
+}
+
+t_cmd	*handle_redir_more_append(t_cmd *o_cmd, char *cmd, char *end_cmd)
+{
+	return (redir_c(o_cmd, cmd, end_cmd, '+'));
+}
+
+t_cmd	*handle_heredoc(t_cmd *o_cmd, char *cmd, char *end_cmd)
 {
 	t_exec_c	*exec_c;
 
-	if (tok == '<' && tok)
-	{
-		o_cmd = redir_c(o_cmd, cmd, end_cmd, O_RDONLY);
-		return (1);
-	}
-	else if (tok == '>' && tok)
-	{
-		o_cmd = redir_c(o_cmd, cmd, end_cmd, O_WRONLY | O_CREAT);
-		return (1);
-	}
-	else if (tok == '+' && tok)
-	{
-		o_cmd = redir_c(o_cmd, cmd, end_cmd, O_APPEND | O_CREAT);
-		return (1);
-	}
-	else if (tok == 'H' && tok)
-	{
-		o_cmd = redir_c(o_cmd, cmd, end_cmd, 'H');
-		exec_c = (t_exec_c *)o_cmd;
-		here_doc(exec_c->args, cmd);
-		return (1);
-	}
-	return (0);
+	o_cmd = redir_c(o_cmd, cmd, end_cmd, 'H');
+	exec_c = (t_exec_c *)o_cmd;
+	here_doc(exec_c->args, cmd);
+	return (o_cmd);
 }
 
 t_cmd	*parseredirs(t_cmd *o_cmd, char **ptr, char *end_ptr)
 {
-	int			tok;
-	char		*cmd;
-	char		*end_cmd;
+	char	*cmd;
+	char	*end_cmd;
+	int		tok;
 
+	tok = 0;
 	while (jump(ptr, end_ptr, "<>"))
 	{
 		tok = init_token(ptr, end_ptr, 0, 0);
 		if (init_token(ptr, end_ptr, &cmd, &end_cmd))
 		{
-			if (init_redir(o_cmd, cmd, end_cmd, tok) == 1)
-				break ;
+			if (tok == '<' && tok)
+				o_cmd = handle_redir_less(o_cmd, cmd, end_cmd);
+			else if (tok == '>' && tok)
+				o_cmd = handle_redir_more(o_cmd, cmd, end_cmd);
+			else if (tok == '+' && tok)
+				o_cmd = handle_redir_more_append(o_cmd, cmd, end_cmd);
+			else if (tok == 'H' && tok)
+				o_cmd = handle_heredoc(o_cmd, cmd, end_cmd);
+			else
+				terminated("invalid redirection operator");
 		}
 		else
 			terminated("missing file for redirection");
@@ -163,3 +168,5 @@ t_cmd	*parsecmd(char *buf, t_envlist *envlist)
 	quotes_handler(cmd, envlist);
 	return (cmd);
 }
+
+	// print_cmd(cmd);

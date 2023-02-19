@@ -246,8 +246,8 @@ char	*handle_double_quotes(char *cmd, int *double_count)
 	return (cmd);
 }
 
-char	*replace_env_var(char *cmd, int *it_e, t_envlist *list, int *single_count,
-				int *double_count, int *flag)
+char	*replace_env_var(char *cmd, int *it_e, t_envlist *list,
+			t_quote *sd)
 {
 	int		it_s;
 	int		len;
@@ -255,7 +255,7 @@ char	*replace_env_var(char *cmd, int *it_e, t_envlist *list, int *single_count,
 	char	*var;
 
 	len = 0;
-	it_s = it_e + 1;
+	it_s = *(it_e) + 1;
 	while (is_alpha_num(cmd[++(*it_e)]) && *it_e < ft_strlen(cmd))
 		len++;
 	env_var = ft_substr(cmd, it_s, len);
@@ -263,56 +263,54 @@ char	*replace_env_var(char *cmd, int *it_e, t_envlist *list, int *single_count,
 	if (var)
 	{
 		cmd = replace_str(cmd, env_var, var);
-		cmd = delete_q(cmd, ft_strlen(cmd), single_count, double_count);
-		(*flag)++;
-		if (cmd && *double_count > 0)
-			cmd = handle_double_quotes(cmd, double_count);
+		cmd = delete_q(cmd, ft_strlen(cmd),
+				&sd->single_count, &sd->double_count);
+		sd->flag++;
+		if (cmd && sd->double_count > 0)
+			cmd = handle_double_quotes(cmd, &sd->double_count);
 	}
 	return (cmd);
 }
 
-char	*find_and_replace_env_var(char *cmd, t_envlist *list, int *single_count,
-				int *double_count, int *flag)
+char	*find_and_replace_env_var(char *cmd, t_envlist *list, t_quote *sd)
 {
-	int it_e = 0;
+	int	it_e;
 
+	it_e = 0;
 	if (!parse_quotes(cmd))
 		terminated("Error: Unclosed quotes\n");
 	while (cmd[it_e] && it_e < ft_strlen(cmd))
 	{
-		count_quotes(cmd[it_e], single_count, double_count);
-		if (cmd[it_e] == '$' && validate(&cmd[it_e], single_count, double_count, *flag) && check_unclosed(cmd))
+		count_quotes(cmd[it_e], &sd->single_count, &sd->double_count);
+		if (cmd[it_e] == '$' && validate(&cmd[it_e], &sd->single_count,
+				&sd->double_count, sd->flag) && check_unclosed(cmd))
 		{
-			cmd = replace_env_var(cmd, &it_e, list, single_count, double_count, flag);
+			cmd = replace_env_var(cmd, &it_e, list,
+					sd);
 		}
 		it_e++;
 	}
 	return (cmd);
 }
 
-
-
-
 void	search_exp(char **cmd, t_envlist *list)
 {
-	int	it;
-	int	flag;
-	int	single_count;
-	int	double_count;
+	int		it;
+	t_quote	sd;
 
 	it = 0;
-	flag = 0;
-	single_count = 0;
-	double_count = 0;
+	sd.single_count = 0;
+	sd.double_count = 0;
+	sd.flag = 0;
 	while (cmd[it] && it < MAX_ARG)
 	{
-		cmd[it] = find_and_replace_env_var(cmd[it], list,
-				&single_count, &double_count, &flag);
-		cmd[it] = delete_quotes(cmd[it], &single_count, &double_count);
+		cmd[it] = find_and_replace_env_var(cmd[it], list, &sd);
+		cmd[it] = delete_quotes(cmd[it], &sd.single_count, &sd.double_count);
 		it++;
 	}
 }
 
+		// printf("<< SD :: [%d] [%d]\n", sd.single_count, sd.double_count);
 // void	search_exp(char **cmd, t_envlist *list)
 // {
 // 	int		it;
@@ -399,7 +397,6 @@ void	quotes_handler(t_cmd *cmd, t_envlist *envlist)
 	else if (cmd->id == REDIR_ID)
 	{
 		rcmd = (t_redir_c *)cmd;
-		// search_exp(rcmd->file, envlist);
 	}
 	else if (cmd->id == PIPE_ID)
 	{
@@ -408,6 +405,7 @@ void	quotes_handler(t_cmd *cmd, t_envlist *envlist)
 		quotes_handler(pcmd->right, envlist);
 	}
 }
+		// search_exp(rcmd->file, envlist);
 
 		// printf(">>>>>>>>>FILE {%s}\n", rcmd->file);
 	// t_back_c    *bcmd;
