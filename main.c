@@ -6,7 +6,7 @@
 /*   By: zbidouli <zbidouli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 00:13:15 by zbidouli          #+#    #+#             */
-/*   Updated: 2023/02/18 00:57:42 by zbidouli         ###   ########.fr       */
+/*   Updated: 2023/02/18 21:36:55 by zbidouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,39 +84,56 @@ int	search_last_quote(char *s, char *es, char mark)
 	return (bow);
 }
 
-char	*switch_token(char *s, char *es, int *ret)
+char	*redir_tok(char *s, char *es, int *ret)
+{
+	if (*s == '>')
+	{
+		s++;
+		if (*s == '>')
+		{
+			*ret = '+';
+			s++;
+		}
+	}
+	else if (*s == '<')
+	{
+		s++;
+		if (*s == '<')
+		{
+			*ret = 'H';
+			s++;
+		}
+	}
+	return (s);
+}
+
+char	*quotes(char *s, char *es, int *ret)
 {
 	int	i;
 
+	i = 0;
+	if (*s == '\'' || *s == '\"')
+	{
+		*ret = *s;
+		i = search_last_quote(s, es, *s);
+		s++;
+		while (*s && !ft_strchr(SYMBOL, *s) && i-- >= 0)
+			s++;
+	}
+	return (s);
+}
+
+char	*switch_token(char *s, char *es, int *ret)
+{
 	if (*s)
 	{
 		if (ft_strchr(SYMBOL, *s))
 			s++;
-		else if (*s == '>')
+		else if (*s == '>' || *s == '<'
+			|| *s == '\'' || *s == '\"')
 		{
-			s++;
-			if (*s == '>')
-			{
-				*ret = '+';
-				s++;
-			}
-		}
-		else if (*s == '<')
-		{
-			s++;
-			if (*s == '<')
-			{
-				*ret = 'H';
-				s++;
-			}
-		}
-		else if (*s == '\'' || *s == '\"')
-		{
-			*ret = *s;
-			i = search_last_quote(s, es, *s);
-			s++;
-			while (*s && !ft_strchr(SYMBOL, *s) && i-- >= 0)
-				s++;
+			s = redir_tok(s, es, ret);
+			s = quotes(s, es, ret);
 		}
 		else
 		{
@@ -215,13 +232,11 @@ char	*switch_token(char *s, char *es, int *ret)
 int	main(int ac, char **av, char **env)
 {
 	char	*buf;
-	int		stat_loc;
 	int		fd;
 	int		s;
 	t_env	env_inf;
 	t_cmd	*cmd;
 
-	fd = open_file();
 	init_env(&env_inf, ac, av, env);
 	signal(SIGINT, handle_int);
 	signal(SIGQUIT, handle_quit);
@@ -239,4 +254,5 @@ int	main(int ac, char **av, char **env)
 	kill(0, SIGTERM);
 	exit(1);
 }
+	// fd = open_file();
 		// print_cmd(cmd);

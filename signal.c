@@ -6,13 +6,13 @@
 /*   By: zbidouli <zbidouli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 21:00:03 by zbidouli          #+#    #+#             */
-/*   Updated: 2023/02/18 00:24:25 by zbidouli         ###   ########.fr       */
+/*   Updated: 2023/02/19 01:20:25 by zbidouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	rl_replace_line(const char *text,int clear_undo)
+void	rl_replace_line(const char *text, int clear_undo)
 {
 	int			len;
 

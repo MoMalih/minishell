@@ -6,25 +6,36 @@
 /*   By: zbidouli <zbidouli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 00:08:08 by zbidouli          #+#    #+#             */
-/*   Updated: 2023/02/18 00:20:36 by zbidouli         ###   ########.fr       */
+/*   Updated: 2023/02/18 23:20:25 by zbidouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	open_file(void)
+int	set_fd(int flag)
 {
-	int	fd;
-
-	fd = 0;
-	while ((fd = open("console", O_RDWR)) >= 0)
-	{
-		if (fd >= 3)
-			close(fd);
-		break;
-	}
-	return (fd);
+	if ((flag == (O_WRONLY | O_CREAT))
+		|| (flag == (O_APPEND | O_CREAT | O_WRONLY)))
+		return (1);
+	else if (flag == 'H')
+		return (-1);
+	else
+		return (0);
 }
+
+// int	open_file(void)
+// {
+// 	int	fd;
+
+// 	fd = 0;
+// 	while ((fd = open("console", O_RDWR)) >= 0)
+// 	{
+// 		if (fd >= 3)
+// 			close(fd);
+// 		break;
+// 	}
+// 	return (fd);
+// }
 
 int	fork_protected(void)
 {

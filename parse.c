@@ -6,46 +6,54 @@
 /*   By: zbidouli <zbidouli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 21:22:21 by zbidouli          #+#    #+#             */
-/*   Updated: 2023/02/17 21:37:31 by zbidouli         ###   ########.fr       */
+/*   Updated: 2023/02/19 01:37:17 by zbidouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	init_redir(t_cmd *o_cmd, char *cmd, char *end_cmd, int tok)
+{
+	t_exec_c	*exec_c;
+
+	if (tok == '<' && tok)
+	{
+		o_cmd = redir_c(o_cmd, cmd, end_cmd, O_RDONLY);
+		return (1);
+	}
+	else if (tok == '>' && tok)
+	{
+		o_cmd = redir_c(o_cmd, cmd, end_cmd, O_WRONLY | O_CREAT);
+		return (1);
+	}
+	else if (tok == '+' && tok)
+	{
+		o_cmd = redir_c(o_cmd, cmd, end_cmd, O_APPEND | O_CREAT);
+		return (1);
+	}
+	else if (tok == 'H' && tok)
+	{
+		o_cmd = redir_c(o_cmd, cmd, end_cmd, 'H');
+		exec_c = (t_exec_c *)o_cmd;
+		here_doc(exec_c->args, cmd);
+		return (1);
+	}
+	return (0);
+}
 
 t_cmd	*parseredirs(t_cmd *o_cmd, char **ptr, char *end_ptr)
 {
 	int			tok;
 	char		*cmd;
 	char		*end_cmd;
-	t_exec_c	*exec_c;
 
 	while (jump(ptr, end_ptr, "<>"))
 	{
 		tok = init_token(ptr, end_ptr, 0, 0);
 		if (init_token(ptr, end_ptr, &cmd, &end_cmd))
 		{
-			if (tok == '<' && tok)
-			{
-				o_cmd = redir_c(o_cmd, cmd, end_cmd, O_RDONLY, 0);
+			if (init_redir(o_cmd, cmd, end_cmd, tok) == 1)
 				break ;
-			}
-			else if (tok == '>' && tok)
-			{
-				o_cmd = redir_c(o_cmd, cmd, end_cmd, O_WRONLY | O_CREAT, 1);
-				break ;
-			}
-			else if (tok == '+' && tok)
-			{
-				o_cmd = redir_c(o_cmd, cmd, end_cmd, O_APPEND | O_CREAT, 1);
-				break ;
-			}
-			else if (tok == 'H' && tok)
-			{
-				o_cmd = redir_c(o_cmd, cmd, end_cmd, 'H', -1);
-				exec_c = (t_exec_c *)o_cmd;
-				here_doc(exec_c->args, cmd);
-				break ;
-			}
 		}
 		else
 			terminated("missing file for redirection");
@@ -68,10 +76,18 @@ t_cmd	*parseblock(char **ptr, char *end_ptr)
 	return (cmd);
 }
 
-t_cmd	*parseexec(char **ptr, char *end_ptr)
+void	init_cmd(t_exec_c	*e_cmd, char *cmd, char *end_cmd, int *ac)
 {
-	char		*cmd;
-	char		*end_cmd;
+	e_cmd->args[*ac] = cmd;
+	e_cmd->end_args[*ac] = end_cmd;
+	*ac += 1;
+	if (*ac >= MAX_ARG)
+		terminated("too many args");
+}
+	// printf("AC>>>> {%d}", *ac);
+
+t_cmd	*parseexec(char **ptr, char *end_ptr, char **cmd, char **end_cmd)
+{
 	int			tok;
 	int			ac;
 	t_exec_c	*e_cmd;
@@ -85,34 +101,31 @@ t_cmd	*parseexec(char **ptr, char *end_ptr)
 	res = parseredirs(res, ptr, end_ptr);
 	while (!jump(ptr, end_ptr, "|)&;"))
 	{
-		tok = init_token(ptr, end_ptr, &cmd, &end_cmd);
+		tok = init_token(ptr, end_ptr, &(*cmd), &(*end_cmd));
 		if (tok == 0)
 			break ;
-		// else if(tok != 'a')
-		// 	terminated("syntax");
-		e_cmd->args[ac] = cmd;
-		e_cmd->end_args[ac] = end_cmd;
-		ac++;
-		if (ac >= MAX_ARG)
-			terminated("too many args");
+		else if (!tok)
+			terminated("SYNTAX");
+		init_cmd(e_cmd, *cmd, *end_cmd, &ac);
 		res = parseredirs(res, ptr, end_ptr);
 	}
-	e_cmd->args[ac] = 0;
-	e_cmd->end_args[ac] = 0;
+	init_cmd(e_cmd, 0, 0, &ac);
 	return (res);
 }
 
 t_cmd	*parsepipe(char **ptr, char *end_ptr)
 {
-	t_cmd	*cmd;
+	t_cmd	*commd;
+	char	*cmd;
+	char	*end_cmd;
 
-	cmd = parseexec(ptr, end_ptr);
+	commd = parseexec(ptr, end_ptr, &cmd, &end_cmd);
 	if (jump(ptr, end_ptr, "|"))
 	{
 		init_token(ptr, end_ptr, 0, 0);
-		cmd = pipe_c(cmd, parsepipe(ptr, end_ptr));
+		commd = pipe_c(commd, parsepipe(ptr, end_ptr));
 	}
-	return (cmd);
+	return (commd);
 }
 
 t_cmd	*parseline(char **ptr, char *end_ptr)

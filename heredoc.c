@@ -27,5 +27,5 @@ char    *here_doc(char *input, char *command)
         free(tmp2);
     }
     // close(fd);
-    // return ("heredoc.txt");
+    return ("heredoc.txt");
 }

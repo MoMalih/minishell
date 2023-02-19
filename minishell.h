@@ -114,7 +114,7 @@ void	safe_free(void **ptr);
 t_cmd   *parsecmd(char *buf, t_envlist *env_list);
 t_cmd   *parseline(char **ptr, char *end_ptr);
 t_cmd   *parsepipe(char **ptr, char *end_ptr);
-t_cmd   *parseexec(char **ptr, char *end_ptr);
+t_cmd   *parseexec(char **ptr, char *end_ptr, char **cmd, char **end_cmd);
 t_cmd   *parseredirs(t_cmd *cmd, char **ptr, char *end_ptr);
 t_cmd   *parseblock(char **ptr, char *end_ptr);
 
@@ -122,7 +122,7 @@ t_cmd   *parseblock(char **ptr, char *end_ptr);
 t_cmd   *exec_c(void);
 t_cmd   *new_cmd(char **args, char *redir, char *file, struct s_cmd *next);
 void    free_cmd(t_cmd *cmd);
-t_cmd   *redir_c(t_cmd *sub_cmd,char *file, char *efile, int flag, int fd);
+t_cmd   *redir_c(t_cmd *sub_cmd,char *file, char *efile, int flag);
 t_cmd   *pipe_c(t_cmd *left, t_cmd *right);
 t_cmd   *list_c(t_cmd *left, t_cmd *right);
 t_cmd   *back_c(t_cmd *backcmd);
@@ -155,6 +155,7 @@ void    quotes_handler(t_cmd *cmd, t_envlist *env);
 void    count_quotes(char cmd_char, int *single_count, int *double_count);
 int     parse_quotes(char *input);
 char    *here_doc(char *input, char *command);
+int     set_fd(int flag);
 // void    runcmd(t_cmd *cmd, t_envlist *env);
 
 
