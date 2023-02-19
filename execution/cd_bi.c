@@ -74,7 +74,6 @@ int	cd_builtin(char **args, t_envlist **env)
 {
 	char	*path;
 
-	printf("wsl hna");
 	if (!args[1] || ft_strcmp(args[1], "~") == 0)
 	{
 		path = get_env_var_value(*env, "HOME");
@@ -83,13 +82,9 @@ int	cd_builtin(char **args, t_envlist **env)
 	}
 	else if (ft_strcmp(args[1], "-") == 0)
 		go_dash(&path, env);
-	else if (ft_strcmp(args[1], "..") == 0)
+	else if ((ft_strcmp(args[1], "..") == 0) || (ft_strcmp(args[1], "../") == 0)
+		|| (ft_strcmp(args[1], "/") == 0))
 		two_point();
-	else if (ft_strcmp(args[1], "/") == 0)
-	{
-		if (chdir("/") != 0)
-			perror("cd");
-	}
 	else
 		go_to(&path, env, args);
 	move_path(path, env);

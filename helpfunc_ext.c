@@ -1,41 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   helpfunc_ext.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zbidouli <zbidouli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/17 21:00:03 by zbidouli          #+#    #+#             */
-/*   Updated: 2023/02/19 01:20:25 by zbidouli         ###   ########.fr       */
+/*   Created: 2023/02/19 20:07:49 by zbidouli          #+#    #+#             */
+/*   Updated: 2023/02/19 20:08:28 by zbidouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	rl_replace_line(const char *text, int clear_undo)
+int	set_fd(int flag)
 {
-	int			len;
-
-	len = strlen(text);
-	strcpy(rl_line_buffer, text);
-	rl_end = len;
+	if ((flag == (O_WRONLY | O_CREAT))
+		|| (flag == (O_APPEND | O_CREAT | O_WRONLY)))
+		return (1);
+	else if (flag == 'H')
+		return (-1);
+	else
+		return (0);
 }
 
-void	handle_int(int signo)
+int	fork_protected(void)
 {
-	if (signo == SIGINT)
-	{
-		printf("\n");
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
-}
+	int	pid;
 
-void	handle_quit(int sig_code)
-{
-	if (sig_code == SIGQUIT)
-	{
-		rl_redisplay();
-	}
+	pid = fork();
+	if (pid == -1)
+		terminated("fork");
+	return (pid);
 }

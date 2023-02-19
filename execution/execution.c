@@ -15,6 +15,10 @@
 void	handle_redir_cmd(t_redir_c *rcmd, t_envlist *env)
 {
 	close(rcmd->fd);
+	if (rcmd->flag == 72)
+	{
+		runcmd(rcmd->cmd, env);
+	}
 	if (open(rcmd->file, rcmd->flag) < 0)
 	{
 		panic("open failed");

@@ -6,35 +6,11 @@
 /*   By: zbidouli <zbidouli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 00:08:08 by zbidouli          #+#    #+#             */
-/*   Updated: 2023/02/18 00:20:36 by zbidouli         ###   ########.fr       */
+/*   Updated: 2023/02/19 20:08:26 by zbidouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	open_file(void)
-{
-	int	fd;
-
-	fd = 0;
-	while ((fd = open("console", O_RDWR)) >= 0)
-	{
-		if (fd >= 3)
-			close(fd);
-		break;
-	}
-	return (fd);
-}
-
-int	fork_protected(void)
-{
-	int	pid;
-
-	pid = fork();
-	if (pid == -1)
-		terminated("fork");
-	return (pid);
-}
 
 void	*ft_memset(void *b, int c, size_t len)
 {

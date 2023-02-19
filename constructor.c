@@ -6,7 +6,7 @@
 /*   By: zbidouli <zbidouli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 00:03:30 by zbidouli          #+#    #+#             */
-/*   Updated: 2023/02/18 00:07:09 by zbidouli         ###   ########.fr       */
+/*   Updated: 2023/02/18 21:15:51 by zbidouli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_cmd	*exec_c(void)
 	return ((t_cmd *)cmd);
 }
 
-t_cmd	*redir_c(t_cmd *sub_cmd, char *file, char *efile, int flag, int fd)
+t_cmd	*redir_c(t_cmd *sub_cmd, char *file, char *efile, int flag)
 {
 	t_redir_c	*cmd;
 
@@ -37,7 +37,7 @@ t_cmd	*redir_c(t_cmd *sub_cmd, char *file, char *efile, int flag, int fd)
 	cmd->file = file;
 	cmd->efile = efile;
 	cmd->flag = flag;
-	cmd->fd = fd;
+	cmd->fd = set_fd(flag);
 	return ((t_cmd *)cmd);
 }
 
